@@ -52,6 +52,8 @@ namespace Browser {
 
 	void CBrowser::ActiveChromeTab(HWND hActive, HWND hOldWnd)
 	{
+		if (m_bInDestroyState)
+			return;
 		m_bTabChange = true;
 		if (g_pCosmos->m_bChromeNeedClosed == false && m_pBrowser)
 		{
@@ -67,13 +69,13 @@ namespace Browser {
 					CWebPage* pPage = (CWebPage*)it->second;
 					if (pPage->m_pGalaxy && pPage->m_pCosmosFrameWndInfo)
 					{
-						CString strKey = pPage->m_pGalaxy->m_strCurrentKey;
+						CComBSTR bstrKey(pPage->m_pGalaxy->m_strCurrentKey);
 						for (auto it : pPage->m_pCosmosFrameWndInfo->m_mapAuxiliaryGalaxys)
 						{
 							if (it.second != pPage->m_pGalaxy)
 							{
 								IXobj* pObj = nullptr;
-								pPage->Observe(CComBSTR(strKey), CComBSTR(""), &pObj);
+								pPage->Observe(bstrKey, CComBSTR(""), &pObj);
 							}
 						}
 					}
@@ -88,6 +90,8 @@ namespace Browser {
 
 	LRESULT CBrowser::OnChromeTabChange(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&) {
 		LRESULT lRes = DefWindowProc(uMsg, wParam, lParam);
+		if (m_bInDestroyState)
+			return lRes;
 		g_pCosmos->m_pActiveHtmlWnd = m_pVisibleWebWnd;
 		if (m_pVisibleWebWnd && g_pCosmos->m_pActiveHtmlWnd->m_pChromeRenderFrameHost)
 		{
@@ -99,7 +103,7 @@ namespace Browser {
 	}
 
 	void CBrowser::UpdateContentRect(HWND hWnd, RECT& rc, int nTopFix) {
-		if (hWnd == 0 || ::IsWindowVisible(m_hWnd) == false || g_pCosmos->m_bChromeNeedClosed == TRUE || g_pCosmos->m_bOMNIBOXPOPUPVISIBLE) {
+		if (m_bInDestroyState || hWnd == 0 || ::IsWindowVisible(m_hWnd) == false || g_pCosmos->m_bChromeNeedClosed == TRUE || g_pCosmos->m_bOMNIBOXPOPUPVISIBLE) {
 			return;
 		}
 		if (m_hOldTab)
@@ -182,7 +186,7 @@ namespace Browser {
 	};
 
 	LRESULT CBrowser::BrowserLayout() {
-		if (m_pVisibleWebWnd == nullptr || m_bTabChange ||
+		if (m_bInDestroyState || m_pVisibleWebWnd == nullptr || m_bTabChange ||
 			!::IsWindowVisible(m_hWnd) ||
 			g_pCosmos->m_bChromeNeedClosed == TRUE)
 			return 0;
@@ -439,6 +443,7 @@ namespace Browser {
 
 	LRESULT CBrowser::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	{
+		m_bInDestroyState = true;
 		if (g_pCosmos->m_pCLRProxy)
 		{
 			IBrowser* pIBrowser = nullptr;

@@ -98,6 +98,8 @@ namespace Browser {
 	void CBrowser::ActiveChromeTab(HWND hActive, HWND hOldWnd)
 	{
 		m_bTabChange = true;
+		if (m_bInDestroyState)
+			return;
 		if (g_pCosmos->m_bChromeNeedClosed == false && m_pBrowser)
 		{
 			if (::IsWindow(hOldWnd))
@@ -109,6 +111,8 @@ namespace Browser {
 
 	LRESULT CBrowser::OnChromeTabChange(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&) {
 		LRESULT lRes = DefWindowProc(uMsg, wParam, lParam);
+		if (m_bInDestroyState)
+			return lRes;
 		g_pCosmos->m_pActiveHtmlWnd = m_pVisibleWebWnd;
 		if (m_pVisibleWebWnd && m_pVisibleWebWnd->m_pChromeRenderFrameHost)
 		{
@@ -120,7 +124,7 @@ namespace Browser {
 	}
 
 	void CBrowser::UpdateContentRect(HWND hWnd, RECT& rc, int nTopFix) {
-		if (hWnd == 0 || ::IsWindowVisible(m_hWnd) == false || g_pCosmos->m_bChromeNeedClosed == TRUE || g_pCosmos->m_bOMNIBOXPOPUPVISIBLE) {
+		if (m_bInDestroyState || hWnd == 0 || ::IsWindowVisible(m_hWnd) == false || g_pCosmos->m_bChromeNeedClosed == TRUE || g_pCosmos->m_bOMNIBOXPOPUPVISIBLE) {
 			return;
 		}
 		if (m_hOldTab)
@@ -128,7 +132,7 @@ namespace Browser {
 			RECT rc;
 			::GetWindowRect(m_hOldTab, &rc);
 			ScreenToClient(&rc);
-			::SetWindowPos(m_hOldTab, HWND_BOTTOM, rc.left, rc.top, 1, 1,  SWP_NOACTIVATE);/*SWP_NOREDRAW |*/
+			::SetWindowPos(m_hOldTab, HWND_BOTTOM, rc.left, rc.top, 1, 1, SWP_NOACTIVATE);/*SWP_NOREDRAW |*/
 			m_hOldTab = NULL;
 		}
 
@@ -200,7 +204,7 @@ namespace Browser {
 	};
 
 	LRESULT CBrowser::BrowserLayout() {
-		if (m_pVisibleWebWnd == nullptr || m_bTabChange ||
+		if (m_bInDestroyState || m_pVisibleWebWnd == nullptr || m_bTabChange ||
 			!::IsWindowVisible(m_hWnd) ||
 			g_pCosmos->m_bChromeNeedClosed == TRUE)
 			return 0;
@@ -430,6 +434,7 @@ namespace Browser {
 
 	LRESULT CBrowser::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	{
+		m_bInDestroyState = true;
 		if (g_pCosmos->m_pCLRProxy)
 		{
 			IBrowser* pIBrowser = nullptr;
@@ -540,7 +545,7 @@ namespace Browser {
 				}
 				else if (m_pBrowser)
 				{
-					if(!::IsWindowVisible(m_hWnd))
+					if (!::IsWindowVisible(m_hWnd))
 						::ShowWindow(m_hWnd, SW_SHOW);
 					if (g_pCosmos->m_bOMNIBOXPOPUPVISIBLE)
 					{
@@ -606,4 +611,4 @@ namespace Browser {
 		}
 		return S_OK;
 	}
-}  
+}

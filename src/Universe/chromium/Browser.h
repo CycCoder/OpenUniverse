@@ -81,6 +81,7 @@ namespace Browser {
 		~CBrowser() override;
 
 		bool		m_bTabChange;
+		bool		m_bInDestroyState = false;
 		int			m_heightfix;
 		float		m_fdevice_scale_factor;
 		HWND		m_hDrawWnd;
