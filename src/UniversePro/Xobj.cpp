@@ -547,13 +547,8 @@ STDMETHODIMP CXobj::Observe(BSTR bstrKey, BSTR bstrXml, IXobj** ppRetXobj)
 	case Grid:
 		break;
 	}
-	if (g_pCosmos->m_pMDIMainWnd &&
-		g_pCosmos->m_pMDIMainWnd->m_pGalaxy &&
-		::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_pHostWnd->m_hWnd))
-	{
-		g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
-		::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
-	}
+	m_pXobjShareData->m_pGalaxy->ModifyStyle(WS_CLIPCHILDREN, 0);
+	::PostMessage(m_pHostWnd->m_hWnd, WM_COSMOSMSG, 0, 20210202);
 	return S_OK;
 }
 
@@ -637,13 +632,8 @@ STDMETHODIMP CXobj::ObserveEx(int nRow, int nCol, BSTR bstrKey, BSTR bstrXml, IX
 				CGalaxy* pGalaxy = m_pXobjShareData->m_pGalaxy;
 				pGalaxy->HostPosChanged();
 			}
-			if (g_pCosmos->m_pMDIMainWnd &&
-				g_pCosmos->m_pMDIMainWnd->m_pGalaxy &&
-				::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_pHostWnd->m_hWnd))
-			{
-				g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
-				::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
-			}
+			m_pXobjShareData->m_pGalaxy->ModifyStyle(WS_CLIPCHILDREN, 0);
+			::PostMessage(m_pHostWnd->m_hWnd, WM_COSMOSMSG, 0, 20210202);
 			return hr;
 		}
 	}
