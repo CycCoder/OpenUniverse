@@ -78,10 +78,9 @@ namespace Browser {
 						}
 					}
 				}
-				if (g_pCosmos->m_pMDIMainWnd)// && ::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_hWnd))
+				if (g_pCosmos->m_pCosmosDelegate)
 				{
-					g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
-					::SendMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+					::PostMessage(m_hWnd, WM_COSMOSMSG, 1, 20200115);
 				}
 			}
 		}
@@ -352,6 +351,11 @@ namespace Browser {
 				m_pBrowser->LayoutBrowser();
 				::PostMessage(m_hWnd, WM_BROWSERLAYOUT, 0, 2);
 				::InvalidateRect(m_hWnd, nullptr, true);
+				if (m_pParentXobj)
+				{
+					m_pParentXobj->m_pXobjShareData->m_pGalaxy->HostPosChanged();
+					g_pCosmos->m_pCosmosDelegate->QueryWndInfo(RecalcLayout, m_pParentXobj->m_pHostWnd->m_hWnd);
+				}
 			}
 		}
 		break;

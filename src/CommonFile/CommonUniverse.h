@@ -208,7 +208,8 @@ namespace CommonUniverse {
 		OtherType= 0x00000003,
 		QueryDestroy = 0x00000004,
 		CanAddView = 0x00000005,
-		ObserveComplete = 0x00000006
+		ObserveComplete = 0x00000006,
+		RecalcLayout = 0x00000007
 	}QueryType;
 
 	typedef struct IPCMsg {

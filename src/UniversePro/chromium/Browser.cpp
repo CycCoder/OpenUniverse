@@ -78,10 +78,9 @@ namespace Browser {
 						}
 					}
 				}
-				if (g_pCosmos->m_pMDIMainWnd)//&&::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd,m_hWnd))
+				if (g_pCosmos->m_pCosmosDelegate)
 				{
-					g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
-					::SendMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+					::PostMessage(m_hWnd, WM_COSMOSMSG, 1, 20200115);
 				}
 			}
 		}
@@ -149,7 +148,7 @@ namespace Browser {
 				nTopFix * m_fdevice_scale_factor,
 				rc.right * m_fdevice_scale_factor,
 				(rc.bottom - rc.top) * m_fdevice_scale_factor,
-				SWP_SHOWWINDOW /*| SWP_NOREDRAW*/ | SWP_NOACTIVATE);
+				SWP_SHOWWINDOW | SWP_NOREDRAW | SWP_NOACTIVATE);
 			HWND hWebHostWnd = m_pVisibleWebWnd->m_hWebHostWnd;
 			if (hWebHostWnd == NULL)
 				hWebHostWnd = m_pVisibleWebWnd->m_hChildWnd;
@@ -229,6 +228,12 @@ namespace Browser {
 				::ShowWindow(_hWebPage, SW_SHOW);
 			}
 		}
+		//if (m_pVisibleWebWnd->m_pGalaxy && m_pVisibleWebWnd->m_pGalaxy->m_pBindingXobj)
+		//{
+		//	HWND h = m_pVisibleWebWnd->m_pGalaxy->m_pBindingXobj->m_pHostWnd->m_hWnd;
+		//	if (::IsWindowVisible(h))
+		//		_hWebPage = h;
+		//}
 		::GetWindowRect(_hWebPage, &rcWebPage);
 		::ScreenToClient(m_hWnd, (LPPOINT)&rcWebPage);
 		::ScreenToClient(m_hWnd, ((LPPOINT)&rcWebPage) + 1);
@@ -303,7 +308,7 @@ namespace Browser {
 			{
 				g_pCosmos->m_pHtmlWndCreated->m_bDevToolWnd = false;
 				g_pCosmos->m_mapHtmlWnd[hWnd] = g_pCosmos->m_pHtmlWndCreated;
-				if (m_pBrowser && hWnd == m_pBrowser->GetActiveWebContentWnd())
+				if (m_pBrowser&&hWnd == m_pBrowser->GetActiveWebContentWnd())
 					m_pVisibleWebWnd = g_pCosmos->m_pHtmlWndCreated;
 #ifdef WIN32	
 				if (::IsWindow(hPWnd))
@@ -346,6 +351,11 @@ namespace Browser {
 				m_pBrowser->LayoutBrowser();
 				::PostMessage(m_hWnd, WM_BROWSERLAYOUT, 0, 2);
 				::InvalidateRect(m_hWnd, nullptr, true);
+				if (m_pParentXobj)
+				{
+					m_pParentXobj->m_pXobjShareData->m_pGalaxy->HostPosChanged();
+					g_pCosmos->m_pCosmosDelegate->QueryWndInfo(RecalcLayout, m_pParentXobj->m_pHostWnd->m_hWnd);
+				}
 			}
 		}
 		break;
