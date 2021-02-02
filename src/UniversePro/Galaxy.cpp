@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202101310021
+ *           Web Runtime for Application - Version 1.0.0.202102020022
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -762,7 +762,7 @@ LRESULT CMDIChildWindow::OnMDIActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, 
 				_pGalaxy->Observe(bstrKey, bstrXml, &pXobj);
 			}
 		}
-		CWebPage* pPage = g_pCosmos->m_pMDIMainWnd->m_pHostBrowser->m_pVisibleWebWnd;
+		CWebPage* pPage = g_pCosmos->m_pMDIMainWnd->m_pGalaxy->m_pWebPageWnd;
 		if (g_pCosmos->m_pMDIMainWnd->m_pGalaxy && pPage)
 		{
 			pPage->LoadDocument2Viewport(strKey, _T(""));
@@ -2817,10 +2817,6 @@ LRESULT CGalaxy::OnCosmosMsg(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	case 20180115:
 	{
 		HostPosChanged();
-		if (g_pCosmos->m_pMDIMainWnd && 
-			g_pCosmos->m_pMDIMainWnd->m_pGalaxy&&
-			::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd,m_hWnd))
-			g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
 	}
 	break;
 	case 20200601:

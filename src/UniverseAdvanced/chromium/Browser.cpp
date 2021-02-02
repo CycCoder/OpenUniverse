@@ -1,5 +1,5 @@
 ﻿/********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202101310021           *
+ *           Web Runtime for Application - Version 1.0.0.202102020022           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -78,6 +78,11 @@ namespace Browser {
 						}
 					}
 				}
+				if (g_pCosmos->m_pMDIMainWnd)// && ::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_hWnd))
+				{
+					g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+					::SendMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+				}
 			}
 		}
 	}
@@ -91,8 +96,6 @@ namespace Browser {
 			g_pCosmos->m_bWinFormActived = false;
 		}
 		m_pBrowser->LayoutBrowser();
-		if (g_pCosmos->m_pMDIMainWnd && ::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_hWnd))
-			::SendMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
 		return lRes;
 	}
 
@@ -120,10 +123,6 @@ namespace Browser {
 				if (m_pVisibleWebWnd->m_pChromeRenderFrameHost)
 				{
 					m_pVisibleWebWnd->m_pChromeRenderFrameHost->ShowWebPage(true);
-					if (m_pParentXobj && g_pCosmos->m_pMDIMainWnd)
-					{
-						g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
-					}
 				}
 				if (m_bTabChange)
 					::PostMessage(m_hWnd, WM_COSMOSMSG, 20200205, 1);
@@ -150,7 +149,7 @@ namespace Browser {
 				nTopFix * m_fdevice_scale_factor,
 				rc.right * m_fdevice_scale_factor,
 				(rc.bottom - rc.top) * m_fdevice_scale_factor,
-				SWP_SHOWWINDOW /*| SWP_NOREDRAW*/ | SWP_NOACTIVATE);
+				SWP_SHOWWINDOW | SWP_NOREDRAW | SWP_NOACTIVATE);
 			HWND hWebHostWnd = m_pVisibleWebWnd->m_hWebHostWnd;
 			if (hWebHostWnd == NULL)
 				hWebHostWnd = m_pVisibleWebWnd->m_hChildWnd;
@@ -230,6 +229,12 @@ namespace Browser {
 				::ShowWindow(_hWebPage, SW_SHOW);
 			}
 		}
+		//if (m_pVisibleWebWnd->m_pGalaxy && m_pVisibleWebWnd->m_pGalaxy->m_pBindingXobj)
+		//{
+		//	HWND h = m_pVisibleWebWnd->m_pGalaxy->m_pBindingXobj->m_pHostWnd->m_hWnd;
+		//	if (::IsWindowVisible(h))
+		//		_hWebPage = h;
+		//}
 		::GetWindowRect(_hWebPage, &rcWebPage);
 		::ScreenToClient(m_hWnd, (LPPOINT)&rcWebPage);
 		::ScreenToClient(m_hWnd, ((LPPOINT)&rcWebPage) + 1);

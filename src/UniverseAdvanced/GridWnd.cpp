@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202101310021
+ *           Web Runtime for Application - Version 1.0.0.202102020022
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -264,11 +264,6 @@ LRESULT CGridWnd::OnSplitterNodeAdd(WPARAM wParam, LPARAM lParam)
 	{
 		return 0;
 	}
-	//if (lParam == 20200601)
-	//{
-	//	RecalcLayout();
-	//	return 0;
-	//}
 	if (lParam == 1993)
 	{
 		//fix bug for .net Control or Window Form

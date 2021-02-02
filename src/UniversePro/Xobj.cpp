@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202101310021           *
+ *           Web Runtime for Application - Version 1.0.0.202102020022           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -463,7 +463,7 @@ STDMETHODIMP CXobj::ActiveTabPage(IXobj * _pXobj)
 	return S_OK;
 }
 
-STDMETHODIMP CXobj::Observe(BSTR bstrKey, BSTR bstrXml, IXobj * *ppRetXobj)
+STDMETHODIMP CXobj::Observe(BSTR bstrKey, BSTR bstrXml, IXobj** ppRetXobj)
 {
 	switch (m_nViewType)
 	{
@@ -475,11 +475,11 @@ STDMETHODIMP CXobj::Observe(BSTR bstrKey, BSTR bstrXml, IXobj * *ppRetXobj)
 		{
 			if (m_pParentObj && m_pParentObj->m_nViewType == Grid)
 			{
-				HRESULT hr =  m_pParentObj->ObserveEx(m_nRow, m_nCol, bstrKey, bstrXml, ppRetXobj);
+				HRESULT hr = m_pParentObj->ObserveEx(m_nRow, m_nCol, bstrKey, bstrXml, ppRetXobj);
 				return hr;
 			}
 		}
-		if (m_pXobjShareData->m_pGalaxyCluster)
+		else if (m_pXobjShareData->m_pGalaxyCluster)
 		{
 			if (m_nViewType == BlankView && m_pParentObj && m_pParentObj->m_nViewType == Grid)
 			{
@@ -540,7 +540,6 @@ STDMETHODIMP CXobj::Observe(BSTR bstrKey, BSTR bstrXml, IXobj * *ppRetXobj)
 						::PostMessage(pXobj2->m_pHostWnd->m_hWnd, WM_COSMOSMSG, 0, 20200128);
 					}
 				}
-				return hr;
 			}
 		}
 	}
@@ -548,10 +547,17 @@ STDMETHODIMP CXobj::Observe(BSTR bstrKey, BSTR bstrXml, IXobj * *ppRetXobj)
 	case Grid:
 		break;
 	}
+	if (g_pCosmos->m_pMDIMainWnd &&
+		g_pCosmos->m_pMDIMainWnd->m_pGalaxy &&
+		::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_pHostWnd->m_hWnd))
+	{
+		g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+		::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+	}
 	return S_OK;
 }
 
-STDMETHODIMP CXobj::ObserveEx(int nRow, int nCol, BSTR bstrKey, BSTR bstrXml, IXobj * *ppRetXobj)
+STDMETHODIMP CXobj::ObserveEx(int nRow, int nCol, BSTR bstrKey, BSTR bstrXml, IXobj** ppRetXobj)
 {
 	if (m_pXobjShareData->m_pGalaxyCluster && m_nViewType == Grid)
 	{
@@ -559,7 +565,7 @@ STDMETHODIMP CXobj::ObserveEx(int nRow, int nCol, BSTR bstrKey, BSTR bstrXml, IX
 		GetXobj(nRow, nCol, &pXobj);
 		if (pXobj == nullptr)
 			return S_OK;
-		CXobj * pWndXobj = (CXobj*)pXobj;
+		CXobj* pWndXobj = (CXobj*)pXobj;
 		if (pWndXobj->m_pHostGalaxy == nullptr)
 		{
 			CString strName = pWndXobj->m_strNodeName;
@@ -608,7 +614,7 @@ STDMETHODIMP CXobj::ObserveEx(int nRow, int nCol, BSTR bstrKey, BSTR bstrXml, IX
 				}
 				return S_OK;
 			}
-			CXobj* pRootXobj = (CXobj*)* ppRetXobj;
+			CXobj* pRootXobj = (CXobj*)*ppRetXobj;
 			CString strKey = OLE2T(bstrKey);
 			strKey.MakeLower();
 			m_mapExtendNode[pWndXobj] = strKey;
@@ -626,10 +632,17 @@ STDMETHODIMP CXobj::ObserveEx(int nRow, int nCol, BSTR bstrKey, BSTR bstrXml, IX
 				//::InvalidateRect(::GetParent(pWebWnd->m_hWnd), nullptr, true);
 			}
 			HWND h = ::GetParent(m_pHostWnd->m_hWnd);
-			if (m_nViewType==Grid)
+			if (m_nViewType == Grid)
 			{
 				CGalaxy* pGalaxy = m_pXobjShareData->m_pGalaxy;
 				pGalaxy->HostPosChanged();
+			}
+			if (g_pCosmos->m_pMDIMainWnd &&
+				g_pCosmos->m_pMDIMainWnd->m_pGalaxy &&
+				::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_pHostWnd->m_hWnd))
+			{
+				g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+				::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
 			}
 			return hr;
 		}

@@ -1,5 +1,5 @@
 ﻿/********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202101310021           *
+ *           Web Runtime for Application - Version 1.0.0.202102020022           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -78,6 +78,11 @@ namespace Browser {
 						}
 					}
 				}
+				if (g_pCosmos->m_pMDIMainWnd)//&&::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd,m_hWnd))
+				{
+					g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+					::SendMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+				}
 			}
 		}
 	}
@@ -91,8 +96,6 @@ namespace Browser {
 			g_pCosmos->m_bWinFormActived = false;
 		}
 		m_pBrowser->LayoutBrowser();
-		if (g_pCosmos->m_pMDIMainWnd && ::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_hWnd))
-			::SendMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
 		return lRes;
 	}
 
@@ -120,10 +123,6 @@ namespace Browser {
 				if (m_pVisibleWebWnd->m_pChromeRenderFrameHost)
 				{
 					m_pVisibleWebWnd->m_pChromeRenderFrameHost->ShowWebPage(true);
-					if (m_pParentXobj && g_pCosmos->m_pMDIMainWnd)
-					{
-						g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
-					}
 				}
 				if (m_bTabChange)
 					::PostMessage(m_hWnd, WM_COSMOSMSG, 20200205, 1);
@@ -304,7 +303,7 @@ namespace Browser {
 			{
 				g_pCosmos->m_pHtmlWndCreated->m_bDevToolWnd = false;
 				g_pCosmos->m_mapHtmlWnd[hWnd] = g_pCosmos->m_pHtmlWndCreated;
-				if (m_pBrowser&&hWnd == m_pBrowser->GetActiveWebContentWnd())
+				if (m_pBrowser && hWnd == m_pBrowser->GetActiveWebContentWnd())
 					m_pVisibleWebWnd = g_pCosmos->m_pHtmlWndCreated;
 #ifdef WIN32	
 				if (::IsWindow(hPWnd))

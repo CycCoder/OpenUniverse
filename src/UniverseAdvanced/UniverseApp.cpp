@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202101310021           *
+ *           Web Runtime for Application - Version 1.0.0.202102020022           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  *
@@ -1068,19 +1068,19 @@ LRESULT CALLBACK CUniverse::CosmosMsgWndProc(_In_ HWND hWnd, UINT msg, _In_ WPAR
 			}
 			return 0;
 		}
-	}
-	switch (lParam)
-	{
-	case 10001000:
-	{
-		if (g_pCosmos->m_nAppID != 9 && g_pCosmos->m_bEclipse == false && g_pCosmos->m_bOfficeApp == false)
+		switch (lParam)
 		{
-			::PostMessage(g_pCosmos->m_hCosmosWnd, WM_HUBBLE_APPQUIT, 0, 0);
+		case 10001000:
+		{
+			if (g_pCosmos->m_nAppID != 9 && g_pCosmos->m_bEclipse == false && g_pCosmos->m_bOfficeApp == false)
+			{
+				::PostMessage(g_pCosmos->m_hCosmosWnd, WM_HUBBLE_APPQUIT, 0, 0);
+			}
 		}
-	}
-	break;
-	default:
 		break;
+		default:
+			break;
+		}
 	}
 	return 1;
 	break;
@@ -1259,13 +1259,6 @@ LRESULT CUniverse::CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 			::SetProp(hWnd, _T("CosmosFrameWndInfo"), pCosmosFrameWndInfo);
 			::PostAppMessage(::GetCurrentThreadId(), WM_COSMOSMSG, (WPARAM)hWnd, 20210105);
-			HWND h = ::GetAncestor(hPWnd, GA_ROOT);
-			if (::IsWindow(h))
-			{
-				::PostMessage(g_pCosmos->m_hCosmosWnd, WM_CONTROLBARCREATED, (WPARAM)hWnd, (LPARAM)h);
-			}
-			if (g_pCosmos->m_pCosmosDelegate)
-				g_pCosmos->m_pCosmosDelegate->AppWindowCreated(_T("Afx:ControlBar"), hPWnd, hWnd);
 		}
 		//else if (strClassName.Find(_T("Afx:MiniFrame:")) == 0)
 		//{

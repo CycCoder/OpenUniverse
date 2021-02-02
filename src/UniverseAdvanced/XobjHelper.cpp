@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202101310021           *
+ *           Web Runtime for Application - Version 1.0.0.202102020022           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -104,7 +104,6 @@ BOOL CXobjHelper::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw
 		pGalaxy->m_pBindingXobj = m_pXobj;
 
 		m_pXobj->m_pXobjShareData->m_pHostClientView = this;
-		CGalaxyCluster* pGalaxyCluster = pGalaxy->m_pGalaxyCluster;
 		HWND hWnd = CreateWindow(L"Cosmos Xobj Class", NULL, WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, pParentWnd->m_hWnd, (HMENU)nID, AfxGetInstanceHandle(), NULL);
 		BOOL bRet = SubclassWindow(hWnd);
 		if (m_pXobj->m_pParentObj)
@@ -119,10 +118,11 @@ BOOL CXobjHelper::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw
 				RECT rc = { 0,0,0,0 };
 				if (::SendMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, (WPARAM)&rc, 19921989) == 19921989)
 				{
-					//::SetWindowPos(pGalaxy->m_pWorkXobj->m_pHostWnd->m_hWnd, m_hWnd, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,  /*SWP_NOSENDCHANGING| SWP_NOZORDER |*/ SWP_NOACTIVATE | SWP_FRAMECHANGED);
+					::SetWindowPos(pGalaxy->m_pWorkXobj->m_pHostWnd->m_hWnd, m_hWnd, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,  /*SWP_NOSENDCHANGING| SWP_NOZORDER |*/ SWP_NOACTIVATE | SWP_FRAMECHANGED);
 				}
 			}
 		}
+
 		m_pXobj->NodeCreated();
 		return bRet;
 	}
@@ -552,7 +552,10 @@ LRESULT CXobjHelper::OnTabChange(WPARAM wParam, LPARAM lParam)
 			}
 		}
 		if (g_pCosmos->m_pMDIMainWnd && ::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_hWnd))
+		{
+			g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
 			::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+		}
 	}
 	LRESULT lRes = CWnd::DefWindowProc(WM_TABCHANGE, wParam, lParam);
 	return lRes;
@@ -606,11 +609,6 @@ LRESULT CXobjHelper::OnCosmosMsg(WPARAM wParam, LPARAM lParam)
 		{
 			for (auto it : m_pXobj->m_vChildNodes)
 			{
-				//if (it->m_nViewType == Grid)
-				//{
-				//	CGridWnd* pWnd = (CGridWnd*)it->m_pHostWnd;
-				//	pWnd->RecalcLayout();
-				//}
 				::PostMessage(it->m_pHostWnd->m_hWnd, WM_COSMOSMSG, 0, 20200601);//for webruntimeVS Dockabe ToolWindow
 			}
 			return CWnd::DefWindowProc(WM_COSMOSMSG, wParam, lParam);
@@ -1088,12 +1086,22 @@ void CXobjHelper::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 	}
 	if (m_hFormWnd)
 		::SetWindowPos(m_hFormWnd, HWND_TOP, 0, 0, lpwndpos->cx, lpwndpos->cy, SWP_NOACTIVATE | SWP_NOREDRAW);
-	else if (m_pXobj->m_strID.CompareNoCase(TGM_NUCLEUS) == 0 || m_pXobj->m_strID.CompareNoCase(_T("mdiclient")) == 0)
+	else if (m_pXobj->m_strID.CompareNoCase(TGM_NUCLEUS) == 0 || m_pXobj->m_strID.CompareNoCase(_T("mdiclient")) == 0)//test 3
 	{
-		if (g_pCosmos->m_pMDIMainWnd && m_pXobj->m_pXobjShareData->m_pGalaxy == g_pCosmos->m_pMDIMainWnd->m_pGalaxy)
+		if (g_pCosmos->m_pMDIMainWnd)
 		{
-			g_pCosmos->m_pMDIMainWnd->m_pGalaxy->m_pBindingXobj = m_pXobj;
-			g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+			if (m_pXobj->m_strID.CompareNoCase(TGM_NUCLEUS) == 0)
+			{
+				if (m_pXobj->m_pXobjShareData->m_pGalaxy->m_hWnd == g_pCosmos->m_pMDIMainWnd->m_hMDIClient)
+				{
+					TRACE(L"");
+				}
+			}
+			if (m_pXobj->m_pXobjShareData->m_pGalaxy == g_pCosmos->m_pMDIMainWnd->m_pGalaxy&&::IsWindowVisible(m_hWnd))
+			{
+				g_pCosmos->m_pMDIMainWnd->m_pGalaxy->m_pBindingXobj = m_pXobj;
+				g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+			}
 		}
 		m_pXobj->m_pXobjShareData->m_pGalaxy->HostPosChanged();
 		return;

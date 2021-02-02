@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202101310021           *
+ *           Web Runtime for Application - Version 1.0.0.202102020022           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -494,7 +494,7 @@ STDMETHODIMP CXobj::Observe(BSTR bstrKey, BSTR bstrXml, IXobj * *ppRetXobj)
 				return hr;
 			}
 		}
-		if (m_pXobjShareData->m_pGalaxyCluster)
+		else if (m_pXobjShareData->m_pGalaxyCluster)
 		{
 			if (m_nViewType == BlankView && m_pParentObj && m_pParentObj->m_nViewType == Grid)
 			{
@@ -555,13 +555,19 @@ STDMETHODIMP CXobj::Observe(BSTR bstrKey, BSTR bstrXml, IXobj * *ppRetXobj)
 						::PostMessage(pXobj2->m_pHostWnd->m_hWnd, WM_COSMOSMSG, 0, 20200128);
 					}
 				}
-				return hr;
 			}
 		}
 	}
 	break;
 	case Grid:
 		break;
+	}
+	if (g_pCosmos->m_pMDIMainWnd &&
+		g_pCosmos->m_pMDIMainWnd->m_pGalaxy &&
+		::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_pHostWnd->m_hWnd))
+	{
+		g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+		::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
 	}
 	return S_OK;
 }
@@ -645,6 +651,13 @@ STDMETHODIMP CXobj::ObserveEx(int nRow, int nCol, BSTR bstrKey, BSTR bstrXml, IX
 			{
 				CGalaxy* pGalaxy = m_pXobjShareData->m_pGalaxy;
 				pGalaxy->HostPosChanged();
+			}
+			if (g_pCosmos->m_pMDIMainWnd &&
+				g_pCosmos->m_pMDIMainWnd->m_pGalaxy &&
+				::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_pHostWnd->m_hWnd))
+			{
+				g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+				::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
 			}
 			return hr;
 		}
@@ -1430,7 +1443,7 @@ CXobj* CXobj::GetMdiclientObj()
 		return nullptr;
 	if (m_pHostGalaxy)
 	{
-		auto it = m_pHostGalaxy->m_pWorkXobj->m_mapChildXobj.find(_T("mdiclient"));
+		auto it = m_pHostGalaxy->m_pWorkXobj->m_mapChildXobj.find(_T("mdiclient"));//test 2
 		if (it != m_pHostGalaxy->m_pWorkXobj->m_mapChildXobj.end())
 		{
 			CXobj* pObj = it->second->GetMdiclientObj();
@@ -1451,6 +1464,8 @@ CXobj* CXobj::GetMdiclientObj()
 
 void CXobj::NodeCreated()
 {
+	if (m_pHostParse == nullptr)
+		return;
 	CosmosInfo* pInfo = new CosmosInfo();
 	pInfo->m_pXobj = this;
 	pInfo->m_pGalaxy = m_pXobjShareData->m_pGalaxy;
