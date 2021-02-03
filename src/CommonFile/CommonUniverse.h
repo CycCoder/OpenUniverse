@@ -603,11 +603,6 @@ namespace CommonUniverse {
 		CString									m_strCurrentAppID;
 		CString									m_strProgramFilePath;
 		CString									m_strAppCommonDocPath;
-		CString									m_strXobjSelectedText;
-		CString									m_strDesignerTip1;
-		CString									m_strDesignerTip2;
-		CString									m_strDesignerXml;
-		CString									m_strDesignerToolBarCaption;
 		CString									m_strStartView;
 		CString									m_strNewDocXml;
 		CString									m_strStartXml;
@@ -634,7 +629,6 @@ namespace CommonUniverse {
 		IUniverseAppProxy*						m_pUniverseAppProxy;
 		IUniverseAppProxy*						m_pCosmosAppProxy;
 		CMDIChildFormInfo*						m_pCurMDIChildFormInfo;
-		IXobj*									m_pHostViewDesignerNode = nullptr;
 		ICosmosExtender*						m_pExtender = nullptr;
 		ICosmosDelegate*						m_pCosmosDelegate = nullptr;
 		CChromeBrowserBase*						m_pActiveBrowser = nullptr;
@@ -678,7 +672,6 @@ namespace CommonUniverse {
 		virtual IBrowser* GetHostBrowser(HWND hNodeWnd) { return nullptr; }
 		virtual void AttachXobj(void* pXobjEvents) {}
 		virtual void CosmosInit() {}
-		virtual CString GetNewLayoutNodeName(BSTR strObjTypeID, IXobj* pDesignNode) { return _T(""); }
 		virtual IGalaxyCluster* Observe(HWND, CString strName, CString strKey) { return nullptr; }
 		virtual IXobj* ObserveCtrl(__int64 handle, CString name, CString NodeTag) { return nullptr; }
 		virtual bool IsMDIClientGalaxyNode(IXobj*) { return false; }
@@ -688,7 +681,6 @@ namespace CommonUniverse {
 		virtual CSession* CreateCloudSession(CWebPageImpl*) { return nullptr; }
 		virtual CSession* GetCloudSession(IXobj*) { return nullptr; }
 		virtual void SetMainWnd(HWND hMain) {}
-		virtual void CosmosNotify(CString strPara1, CString strPara2, WPARAM, LPARAM) {}
 	};
 
 	class ICosmosWindowProvider
@@ -780,9 +772,6 @@ namespace CommonUniverse {
 		virtual void ForegroundIdleProc() {}
 		virtual void OnIPCMsg(CWebPageImpl* pWebPageImpl, CString strType, CString strParam1, CString strParam2, CString strParam3, CString strParam4, CString strParam5) {}
 		virtual void CustomizedDOMElement(HWND hWnd, CString strRuleName, CString strHTML) {}
-		virtual void CosmosNotify(CString strPara1, CString strPara2, WPARAM, LPARAM) {}
-		virtual void AppWindowCreated(CString strType, HWND hPWnd, HWND hWnd) {}
-		virtual void* CreateDocument(CString strType, CString strDocKey) { return nullptr; }
 		virtual HICON GetAppIcon(int nIndex) { return NULL; }
 	};
 

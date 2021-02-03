@@ -120,7 +120,6 @@ namespace OfficePlus
 		{
 			m_pActivePowerPntObject = nullptr;
 			m_pCurrentSavingPresentation = nullptr;
-			m_strDesignerToolBarCaption = _T("PowerPoint Designer");
 		}
 
 		void CPowerPntAddin::AddDocXml(IDispatch* pDocdisp, BSTR bstrXml, BSTR bstrKey)
@@ -295,31 +294,6 @@ namespace OfficePlus
 			{
 			case 100:
 			{
-				CGalaxy* pGalaxy = pCosmosPresentation->m_pGalaxy;
-				if (pGalaxy == nullptr)
-					break;
-				if (pCosmosPresentation->m_bDesignState == false)
-				{
-					pGalaxy->m_bDesignerState = true;
-					pCosmosPresentation->m_bDesignState = true;
-					CreateCommonDesignerToolBar();
-					CXobj* pXobj = pGalaxy->m_pWorkXobj;
-					if (pXobj->m_strID.CompareNoCase(TGM_NUCLEUS) == 0)
-					{
-						CString strXml = _T("<documentui><cluster><xobj name=\"Start\" /></cluster></documentui>");
-						IXobj* pDesignNode = nullptr;
-						pGalaxy->Observe(CComBSTR(L"default-inDesigning"), CComBSTR(strXml), &pDesignNode);
-					}
-
-					m_pDesigningFrame = pGalaxy;
-					m_pDesigningFrame->UpdateDesignerTreeInfo();
-					break;
-				}
-				else
-				{
-					pGalaxy->m_bDesignerState = false;
-					pCosmosPresentation->m_bDesignState = false;
-				}
 			}
 			break;
 			case 101:
@@ -464,15 +438,6 @@ namespace OfficePlus
 							pCosmosPresentation->m_pTaskPaneGalaxy->ModifyHost((LONGLONG)m_pActivePowerPntObject->m_hTaskPane);
 						else
 							pCosmosPresentation->m_pTaskPaneGalaxy->ModifyHost((LONGLONG)m_pActivePowerPntObject->m_hTaskPaneChildWnd);
-					}
-					CGalaxy* pGalaxy = m_pActivePowerPntObject->m_pPresentation->m_pGalaxy;
-					if (pGalaxy)
-					{
-						if (pGalaxy->m_bDesignerState&&m_pDesignerFrame&&m_pDesigningFrame != pGalaxy)
-						{
-							m_pDesigningFrame = pGalaxy;
-							pGalaxy->UpdateDesignerTreeInfo();
-						}
 					}
 				}
 				return true;

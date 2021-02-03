@@ -194,24 +194,16 @@ public:
 	CWebPage*								m_pHtmlWndCreated;
 	CWebPage*								m_pActiveHtmlWnd;
 
-	CGalaxy*								m_pDocTemplateFrame;
 	CMDIMainWindow*							m_pMDIMainWnd;
 	CWinForm*								m_pActiveWinFormWnd;
 
 	CXobj*									m_pActiveXobj;
-	CXobj*									m_pDesignRootNode;
-	CXobj*									m_pDesignXobj;
-	CXobj*									m_pHostDesignUINode;
 	CGalaxy*								m_pGalaxy;
-	CGalaxy*								m_pDesignerFrame;
-	CGalaxy*								m_pDesigningFrame;
 	CGalaxyCluster*							m_pGalaxyCluster;
-	CGalaxyCluster*							m_pDesignerGalaxyCluster;
 
 	CCosmosAppCtrl*							m_pCosmosAppCtrl;
 	ICosmos*								m_pCosmosVS = nullptr;
 
-	CTangramHtmlTreeWnd*					m_pDocDOMTree;
 	CEclipseWnd*							m_pActiveEclipseWnd;
 
 	vector<HWND>							m_vHtmlWnd;
@@ -313,10 +305,7 @@ public:
 	CString EncodeFileToBase64(CString strSRC);
 	CString InitEclipse(_TCHAR* jarFile);
 	CString ComputeHash(CString source);
-	CString GetDesignerInfo(CString);
 	CString GetXmlData(CString strName, CString strXml);
-	CString GetDesignerData(CXobj* pXobj);
-	CString GetDocTemplateXml(CString strCaption, CString strPath, CString strFilter);
 	CString GetPropertyFromObject(IDispatch* pObj, CString strPropertyName);
 	CString	BuildSipURICodeStr(CString strURI, CString strPrev, CString strFix, CString strData, int n1);
 	CString	GetDataFromStr(CString strCoded, CString& strTime, CString strPrev, CString strFix, int n1);
@@ -329,7 +318,6 @@ public:
 	void ConnectWebAgent();
 #endif
 
-	virtual void CreateCommonDesignerToolBar();
 	virtual void ProcessMsg(LPMSG lpMsg);
 	virtual void OnOpenDoc(WPARAM) {};
 	virtual void UpdateOfficeObj(IDispatch* pObj, CString strXml, CString strName) {};
@@ -383,7 +371,6 @@ private:
 	bool CheckUrl(CString&   url);
 	void AttachXobj(void* pXobjEvents);
 	CString Encode(CString strSRC, BOOL bEnCode);
-	CString GetNewLayoutNodeName(BSTR strObjTypeID, IXobj* pDesignNode);
 	IGalaxyCluster* Observe(HWND, CString strName, CString strKey);
 	IXobj* ObserveCtrl(__int64 handle, CString name, CString NodeTag);
 	void BrowserAppStart();
@@ -410,5 +397,4 @@ private:
 	CSession* GetCloudSession(IXobj*);
 	void SetMainWnd(HWND hMain);
 	DWORD ExecCmd(const CString cmd, const BOOL setCurrentDirectory);
-	void CosmosNotify(CString strXml1, CString strXml2, LONGLONG wParam, LONGLONG lParam);
 };

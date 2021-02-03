@@ -119,7 +119,6 @@ namespace OfficePlus
 		virtual CString GetFormXml(CString strFormName) { return _T(""); };
 
 		virtual HRESULT CreateCosmosCtrl(void* pv, REFIID riid, LPVOID* ppv) { return S_FALSE; };
-		virtual void CreateCommonDesignerToolBar();
 
 	protected:
 		CString					m_strLib;

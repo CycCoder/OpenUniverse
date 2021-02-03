@@ -49,71 +49,12 @@ namespace OfficePlus
 			int nVer = _wtoi(strVer);
 			if (nVer < 15)
 				m_bOldVer = true;
-			m_strDesignerToolBarCaption = _T("Excel WorkBook Designer");
 		}
 
 		CExcelAddin::~CExcelAddin()
 		{
 			if (m_pExcelAppObjEvents)
 				delete m_pExcelAppObjEvents;
-		}
-
-		void CExcelAddin::CreateCommonDesignerToolBar()
-		{
-			CString strName = this->m_strExeName;
-			if (::IsWindow(m_hHostWnd) == false)
-			{
-				auto it = m_mapValInfo.find(_T("designertoolcaption"));
-				if (it != m_mapValInfo.end())
-					m_strDesignerToolBarCaption = OLE2T(it->second.bstrVal);
-				m_hHostWnd = ::CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW, _T("Cosmos Xobj Class"), m_strDesignerToolBarCaption, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 400, 400, NULL, 0, theApp.m_hInstance, NULL);
-				m_hChildHostWnd = ::CreateWindowEx(NULL, _T("Cosmos Xobj Class"), _T(""), WS_VISIBLE | WS_CHILD, 0, 0, 0, 0, m_hHostWnd, 0, theApp.m_hInstance, NULL);
-			}
-			if (m_hHostWnd && m_pDesignerGalaxyCluster == nullptr)
-			{
-				HWND hwnd = ::GetActiveWindow();
-				RECT rc;
-				::GetWindowRect(hwnd, &rc);
-				::SetWindowPos(m_hHostWnd, NULL, rc.left + 40, rc.top + 40, 300, 700, SWP_NOACTIVATE | SWP_NOREDRAW);
-
-				if (m_pDesignerGalaxyCluster == nullptr)
-				{
-					auto it = g_pCosmos->m_mapWindowPage.find(m_hHostWnd);
-					if (it != g_pCosmos->m_mapWindowPage.end())
-						m_pDesignerGalaxyCluster = (CGalaxyCluster*)it->second;
-					else
-					{
-						m_pDesignerGalaxyCluster = new CComObject<CGalaxyCluster>();
-						m_pDesignerGalaxyCluster->m_hWnd = m_hHostWnd;
-						g_pCosmos->m_mapWindowPage[m_hHostWnd] = m_pDesignerGalaxyCluster;
-					}
-
-					CString strPath = m_strExeName + _T(".designer");
-					CTangramXmlParse m_Parse;
-					if (m_Parse.LoadFile(strPath))
-					{
-						m_strDesignerXml = m_Parse.xml();
-						if (m_strDesignerXml != _T(""))
-						{
-							auto it = m_pDesignerGalaxyCluster->m_mapGalaxy.find(m_hChildHostWnd);
-							if (it == m_pDesignerGalaxyCluster->m_mapGalaxy.end())
-							{
-								IGalaxy* pGalaxy = nullptr;
-								HRESULT hr = m_pDesignerGalaxyCluster->CreateGalaxy(CComVariant(0), CComVariant((__int64)m_hChildHostWnd), CComBSTR(L"DeignerTool"), &pGalaxy);
-								if (pGalaxy)
-								{
-									IXobj* pXobj = nullptr;
-									pGalaxy->Observe(CComBSTR(L"DeignerToolBox"), CComBSTR(m_strDesignerXml), &pXobj);
-									m_pDesignerFrame = (CGalaxy*)pGalaxy;
-									m_pDesignerFrame->m_bDesignerState = false;
-								}
-							}
-						}
-					}
-				}
-			}
-			::ShowWindow(m_hHostWnd, SW_SHOW);
-			::UpdateWindow(m_hHostWnd);
 		}
 
 		void CExcelAddin::AddDocXml(IDispatch* pDocdisp, BSTR bstrXml, BSTR bstrKey)
@@ -198,16 +139,6 @@ namespace OfficePlus
 
 				IXobj* pXobj = nullptr;
 				pWorkBook->m_pGalaxy->Observe(strName.AllocSysString(), CComBSTR(strXml), &pXobj);
-			}
-
-			CGalaxy* pGalaxy = pExcelObject->m_pWorkBook->m_pGalaxy;
-			if (pGalaxy)
-			{
-				if (pGalaxy->m_bDesignerState && m_pDesignerFrame && m_pDesigningFrame != pGalaxy)
-				{
-					m_pDesigningFrame = pGalaxy;
-					pGalaxy->UpdateDesignerTreeInfo();
-				}
 			}
 		}
 
@@ -482,38 +413,6 @@ namespace OfficePlus
 			{
 			case 100:
 			{
-				CGalaxy* pGalaxy = m_pWorkBook->m_pTaskPaneGalaxy;
-				if (pGalaxy)
-				{
-					if (pGalaxy->m_bDesignerState == false)
-					{
-						pGalaxy->m_bDesignerState = true;
-						if (m_pDesigningFrame != pGalaxy)
-						{
-							m_pDesigningFrame = pGalaxy;
-							pGalaxy->UpdateDesignerTreeInfo();
-						}
-					}
-				}
-
-				if (m_pWorkBook->m_pGalaxy)
-				{
-					m_pWorkBook->m_pGalaxy->m_bDesignerState = true;
-					CreateCommonDesignerToolBar();
-					if (m_pDesignerFrame == nullptr)
-					{
-						auto it = m_pDesignerGalaxyCluster->m_mapGalaxy.find(m_hChildHostWnd);
-						if (it != m_pDesignerGalaxyCluster->m_mapGalaxy.end())
-							m_pDesignerFrame = it->second;
-					}
-					if (m_pDesignerFrame == nullptr)
-						break;
-
-					CXobj* pXobj = m_pDesignerFrame->m_pWorkXobj;
-					m_pDesignerFrame->HostPosChanged();
-					m_pDesigningFrame = m_pWorkBook->m_pGalaxy;
-					m_pDesigningFrame->UpdateDesignerTreeInfo();
-				}
 			}
 			break;
 			case 101:
@@ -633,42 +532,10 @@ namespace OfficePlus
 						}
 					}
 				}
-				if (nCmdIndex == 102)
-				{
-					CGalaxy* pGalaxy = m_pWorkBook->m_pTaskPaneGalaxy;
-					if (pGalaxy == nullptr)return S_OK;
-					CreateCommonDesignerToolBar();
-					if (pGalaxy->m_bDesignerState == false)
-					{
-						pGalaxy->m_bDesignerState = true;
-						if (m_pDesigningFrame != pGalaxy)
-						{
-							m_pDesigningFrame = pGalaxy;
-							pGalaxy->UpdateDesignerTreeInfo();
-						}
-					}
-					else
-					{
-						pGalaxy->m_bDesignerState = false;
-						if (m_pDesigningFrame == pGalaxy)
-						{
-							m_pDesigningFrame = nullptr;
-							pGalaxy->UpdateDesignerTreeInfo();
-						}
-					}
-				}
 			}
 			break;
 			case 102:
 			{
-				//CString strXml = _T("");
-				//if (strXml == _T(""))
-				//{
-				//	CString str = m_strExeName;
-				//	CString strCaption = _T("Excel Plus");
-				//	str += _T("\\");
-				//	strXml = GetDocTemplateXml(strCaption, str,_T(""));
-				//}
 			}
 			break;
 			}

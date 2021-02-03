@@ -451,13 +451,6 @@ STDMETHODIMP CXobj::ActiveTabPage(IXobj * _pXobj)
 	{
 		::SetFocus(hWnd);
 		m_pXobjShareData->m_pGalaxy->HostPosChanged();
-		if (m_pXobjShareData->m_pGalaxy->m_bDesignerState && g_pCosmos->m_pDesignXobj)
-		{
-			g_pCosmos->UpdateXobj(g_pCosmos->m_pDesignXobj->m_pRootObj);
-			CComBSTR bstrXml(L"");
-			g_pCosmos->m_pDesignXobj->m_pRootObj->get_DocXml(&bstrXml);
-			g_pCosmos->m_mapValInfo[_T("tangramdesignerxml")] = CComVariant(bstrXml);
-		}
 		m_pXobjShareData->m_pGalaxy->UpdateVisualWPFMap(::GetParent(hWnd), true);
 	}
 	return S_OK;
@@ -736,79 +729,6 @@ STDMETHODIMP CXobj::put_Attribute(BSTR bstrKey, BSTR bstrVal)
 		if (strID.CompareNoCase(TGM_GRID_TYPE))
 			m_strID = strVal;
 		ATLTRACE(_T("Modify CXobj Attribute: ID: %s Value: %s\n"), strID, strVal);
-		CGalaxy* pGalaxy = nullptr;
-		if (strVal.CompareNoCase(TGM_NUCLEUS) == 0 && g_pCosmos->m_pDesignXobj)
-		{
-			pGalaxy = g_pCosmos->m_pDesignXobj->m_pRootObj->m_pXobjShareData->m_pGalaxy;
-			if (g_pCosmos->m_pMDIMainWnd && pGalaxy->m_hWnd == g_pCosmos->m_pMDIMainWnd->m_hMDIClient)
-			{
-				::MessageBox(nullptr, _T("Default UI Don't have a MDI Client!"), _T("Tangram"), MB_OK);
-				return S_FALSE;
-			}
-			if (g_pCosmos->m_pDesignXobj && pGalaxy->m_pBindingXobj)
-			{
-				CXobj* pOldNode = pGalaxy->m_pBindingXobj;
-				if (pOldNode->m_pXobjShareData->m_pOldGalaxy)
-				{
-					pOldNode->m_pXobjShareData->m_pGalaxy = pOldNode->m_pXobjShareData->m_pOldGalaxy;
-					pOldNode->m_pXobjShareData->m_pOldGalaxy = nullptr;
-				}
-				CXobj* pParent = pOldNode->m_pParentObj;
-				if (pParent && pParent->m_nViewType == Grid)
-				{
-					if (pOldNode != this)
-					{
-						CGridWnd* pWnd = (CGridWnd*)pParent->m_pHostWnd;
-						pWnd->m_pHostXobj = nullptr;
-						if (m_pParentObj == pParent)
-							pWnd->m_pHostXobj = this;
-					}
-				}
-				if (m_pParentObj && m_pParentObj->m_nViewType == Grid)
-				{
-					CGridWnd* pWnd = (CGridWnd*)m_pParentObj->m_pHostWnd;
-					pWnd->m_pHostXobj = this;
-				}
-				pOldNode->m_strID = _T("");
-				if (pOldNode->m_pRootObj == g_pCosmos->m_pDesignXobj->m_pRootObj)
-					pOldNode->m_pHostParse->put_attr(TGM_GRID_TYPE, _T(""));
-				ATLTRACE(_T("Modify CXobj nucleus Attribute: ID:%s Value: %s\n"), strID, strVal);
-				pOldNode->m_pHostWnd->Invalidate();
-				g_pCosmos->UpdateXobj(g_pCosmos->m_pDesignXobj->m_pRootObj);
-				g_pCosmos->put_AppKeyValue(CComBSTR(L"TangramDesignerXml"), CComVariant(g_pCosmos->m_pDesignXobj->m_pRootObj->m_pXobjShareData->m_pCosmosParse->xml()));
-			}
-
-			m_strID = TGM_NUCLEUS;
-			CXobj* pTopXobj = m_pRootObj;
-			pTopXobj->m_pXobjShareData->m_pHostClientView = (CXobjHelper*)m_pHostWnd;
-			while (pTopXobj != pTopXobj->m_pRootObj)
-			{
-				pTopXobj->m_pXobjShareData->m_pGalaxy->m_pBindingXobj = this;
-				pTopXobj->m_pXobjShareData->m_pHostClientView = pTopXobj->m_pXobjShareData->m_pHostClientView;
-				pTopXobj = pTopXobj->m_pRootObj;
-			}
-			m_pHostParse->put_attr(TGM_GRID_TYPE, TGM_NUCLEUS);
-			if (g_pCosmos->m_pDesignXobj)
-			{
-				pGalaxy->m_pBindingXobj = this;
-				g_pCosmos->m_pDesignXobj->m_pXobjShareData->m_pOldGalaxy = g_pCosmos->m_pDesignXobj->m_pXobjShareData->m_pGalaxy;
-				g_pCosmos->m_pDesignXobj->m_pXobjShareData->m_pGalaxy = m_pRootObj->m_pXobjShareData->m_pGalaxy;
-				g_pCosmos->m_pDesignXobj->m_pXobjShareData->m_pHostClientView = m_pRootObj->m_pXobjShareData->m_pHostClientView;
-			}
-
-			if (m_pParentObj && m_pParentObj->m_nViewType == Grid)
-				m_pHostWnd->ModifyStyleEx(WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE, 0);
-			m_pXobjShareData->m_pGalaxy->HostPosChanged();
-			if (m_pXobjShareData->m_pGalaxy->m_pWebPageWnd)
-			{
-				CWebPage* pWebWnd = m_pXobjShareData->m_pGalaxy->m_pWebPageWnd;
-				auto it = g_pCosmos->m_mapBrowserWnd.find(::GetParent(pWebWnd->m_hWnd));
-				if (it != g_pCosmos->m_mapBrowserWnd.end()) {
-					((CBrowser*)it->second)->m_pBrowser->LayoutBrowser();
-					((CBrowser*)it->second)->BrowserLayout();
-				}
-			}
-		}
 		m_pHostParse->put_attr(strID, strVal);
 	}
 	return S_OK;
@@ -1323,9 +1243,6 @@ BOOL CXobj::Create(DWORD dwStyle, const RECT & rect, CWnd * pParentWnd, UINT nID
 						};
 
 						pCosmosDesignView->m_pXHtmlTree->m_Links.SetAppCommands(AppCommands, sizeof(AppCommands) / sizeof(AppCommands[0]));
-
-						if (g_pCosmos->m_pDocDOMTree == nullptr)
-							g_pCosmos->m_pDocDOMTree = pCosmosDesignView->m_pXHtmlTree;
 					}
 					else
 					{

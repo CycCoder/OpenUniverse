@@ -1775,31 +1775,6 @@ CTangramXmlParse* CGalaxy::UpdateXobj()
 
 void CGalaxy::UpdateDesignerTreeInfo()
 {
-	if (m_bDesignerState && g_pCosmos->m_hChildHostWnd) {
-		g_pCosmos->m_pDesigningFrame = this;
-		if (g_pCosmos->m_pDocDOMTree && ::IsWindow(g_pCosmos->m_pDocDOMTree->m_hWnd)) {
-			g_pCosmos->m_pDocDOMTree->DeleteItem(g_pCosmos->m_pDocDOMTree->m_hFirstRoot);
-			if (g_pCosmos->m_pDocDOMTree->m_pHostXmlParse) {
-				delete g_pCosmos->m_pDocDOMTree->m_pHostXmlParse;
-				g_pCosmos->m_pDocDOMTree->m_pHostXmlParse = nullptr;
-			}
-			CXobj* pXobj = g_pCosmos->m_pDesigningFrame->m_pWorkXobj;
-			if (pXobj == nullptr) {
-				return;
-			}
-
-			CString _strName = pXobj->m_strName;
-			_strName += _T("-indesigning");
-			_strName.MakeLower();
-			CTangramXmlParse* pParse = nullptr;
-			auto it = m_mapXobj.find(_strName);
-			if (it != m_mapXobj.end())
-				pParse = it->second->m_pXobjShareData->m_pCosmosParse;
-			else
-				pParse = pXobj->m_pXobjShareData->m_pCosmosParse;
-			g_pCosmos->InitDesignerTreeCtrl(pParse->xml());
-		}
-	}
 }
 
 HWND CGalaxy::GetWinForm(HWND hForm)
@@ -2877,8 +2852,6 @@ LRESULT CGalaxy::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	}
 	if (m_pBKWnd)
 		m_pBKWnd->DestroyWindow();
-	if (g_pCosmos->m_pDesigningFrame && g_pCosmos->m_pDesigningFrame == this)
-		g_pCosmos->m_pDesigningFrame = nullptr;
 	m_pGalaxyCluster->BeforeDestory();
 	m_pGalaxyCluster->m_strConfigFileNodeName.MakeLower();//20190116
 	//auto it = g_pCosmos->m_mapWindowPage.find(m_pGalaxyCluster->m_hWnd);

@@ -51,7 +51,6 @@ namespace OfficePlus
 			m_pCosmosInspectorItems = nullptr;
 			m_pOutLookAppObjEvents = nullptr;
 			m_pOutLookAppObjEvents2 = nullptr;
-			m_strDesignerToolBarCaption = _T("OutLook Designer");
 		}
 
 		COutLookAddin::~COutLookAddin()
@@ -1410,7 +1409,6 @@ namespace OfficePlus
 			{
 			case 100:
 			{
-				pAddin->CreateCommonDesignerToolBar();
 				CComPtr<MAPIFolder> pFolder;
 				m_pExplorer->get_CurrentFolder(&pFolder);
 				if (pFolder)
@@ -2116,19 +2114,6 @@ namespace OfficePlus
 				if (pWnd->m_pGalaxyCluster)
 					pWnd->m_pGalaxyCluster->CreateGalaxy(CComVariant(0), CComVariant((long)pWnd->m_hWnd), CComBSTR(L""), &pWnd->m_pGalaxy);
 			}
-			if (pWnd->m_pGalaxy)
-			{
-				CComBSTR bstrName(L"");
-				pFolder->get_FolderPath(&bstrName);
-				IXobj* pXobj = nullptr;
-				if(strXml==_T(""))
-					strXml  = _T("<Tangram><cluster><xobj name=\"Start\" /></cluster></Tangram>");
-				pWnd->m_pGalaxy->Observe(bstrName, strXml.AllocSysString(), &pXobj);
-				CGalaxy* _pGalaxy = (CGalaxy*)pWnd->m_pGalaxy;
-				_pGalaxy->HostPosChanged();
-				_pGalaxy->m_bDesignerState = true;
-				pAddin->CreateCommonDesignerToolBar();
-			}
 		}
 
 		CInspectorItem::CInspectorItem(void)
@@ -2488,16 +2473,6 @@ namespace OfficePlus
 			if (it2 != m_mapOutLookPage.end())
 			{
 				m_pActiveOutLookPage = it2->second;
-				if (m_pActiveOutLookPage->m_bDesignState)
-				{
-					pAddin->CreateCommonDesignerToolBar();
-					CGalaxy* pGalaxy = (CGalaxy*)m_pActiveOutLookPage->m_pGalaxy;
-					if (pAddin->m_pDesigningFrame != pGalaxy)
-					{
-						pAddin->m_pDesigningFrame = pGalaxy;
-						pGalaxy->UpdateDesignerTreeInfo();
-					}
-				}
 			}
 			else
 			{
@@ -2860,36 +2835,6 @@ namespace OfficePlus
 
 		void COutLookPageWnd::DesignPage()
 		{
-			if (m_bDesignState == false)
-			{
-				m_bDesignState = true;
-				if (m_pGalaxyCluster == nullptr)
-				{
-					g_pCosmos->CreateGalaxyCluster((LONGLONG)m_hWnd, &m_pGalaxyCluster);
-					if (m_pGalaxyCluster)
-					{
-						BSTR bstrName = m_strName.AllocSysString();
-						m_pGalaxyCluster->CreateGalaxy(CComVariant(0), CComVariant((LONGLONG)m_hFrameWnd), bstrName, &m_pGalaxy);
-						if (m_pGalaxy)
-						{
-							m_pGalaxy->put_DesignerState(true);
-							g_pCosmos->CreateCommonDesignerToolBar();
-							IXobj* pXobj = nullptr;
-							if (m_strXml == _T(""))
-							{
-								CString strName = m_strName;
-								strName.Replace(_T(" "), _T("_"));
-								m_strXml.Format(_T("<%s><cluster><xobj name=\"Start\" /></cluster></%s>"), strName, strName);
-							}
-							m_pGalaxy->Observe(bstrName, m_strXml.AllocSysString(), &pXobj);
-							g_pCosmos->m_pDesigningFrame = (CGalaxy*)m_pGalaxy;
-							g_pCosmos->m_pDesigningFrame->m_bDesignerState = true;
-							g_pCosmos->m_pDesigningFrame->UpdateDesignerTreeInfo();
-						}
-						::SysFreeString(bstrName);
-					}
-				}
-			}
 		}
 
 		LRESULT COutLookPageWnd::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

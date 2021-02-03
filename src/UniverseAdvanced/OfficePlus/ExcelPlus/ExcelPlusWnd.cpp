@@ -356,7 +356,6 @@ namespace OfficePlus
 
 		void CExcelWorkBook::OnSheetActivate(IDispatch* Sh)
 		{
-			g_pCosmos->m_pDesignXobj = nullptr;
 			if (m_pGalaxy == nullptr)
 				return;
 

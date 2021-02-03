@@ -129,8 +129,6 @@ namespace OfficePlus
 			//CUniverse:
 			void WindowCreated(CString strClassName, LPCTSTR strName, HWND hPWnd, HWND hWnd);
 			void WindowDestroy(HWND hWnd);
-			
-			void CreateCommonDesignerToolBar();
 
 			STDMETHOD(CosmosCommand)(IDispatch* RibbonControl);
 			HRESULT OnConnection(IDispatch* pHostApp, int ConnectMode);

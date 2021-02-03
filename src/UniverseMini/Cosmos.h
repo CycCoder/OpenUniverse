@@ -75,7 +75,6 @@ public:
 	CWinForm*							m_pActiveWinFormWnd;
 
 	CXobj*								m_pActiveXobj;
-	CXobj*								m_pDesignXobj;
 	CGalaxy*							m_pGalaxy;
 
 	map<CString, CRuntimeClass*>		m_TabWndClassInfoDictionary;
@@ -218,5 +217,4 @@ private:
 	CSession* CreateCloudSession(CWebPageImpl*);
 	CSession* GetCloudSession(IXobj*);
 	void SetMainWnd(HWND hMain);
-	void CosmosNotify(CString strXml1, CString strXml2, LONGLONG wParam, LONGLONG lParam);
 };

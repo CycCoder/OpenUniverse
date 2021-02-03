@@ -185,15 +185,6 @@ int CXobjHelper::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message)
 		&& m_pXobj->m_strID.CompareNoCase(TGM_NUCLEUS)
 		&&m_pXobj->m_pDisp == NULL)
 	{
-		if (g_pCosmos->m_pDesignXobj && g_pCosmos->m_pDesignXobj != m_pXobj)
-		{
-			CXobjHelper* pWnd = ((CXobjHelper*)g_pCosmos->m_pDesignXobj->m_pHostWnd);
-			if (pWnd && ::IsWindow(pWnd->m_hWnd))
-			{
-				pWnd->Invalidate(true);
-			}
-		}
-		g_pCosmos->m_pDesignXobj = m_pXobj;
 		Invalidate(true);
 	}
 
@@ -226,31 +217,9 @@ BOOL CXobjHelper::OnEraseBkgnd(CDC* pDC)
 
 	if (m_pXobj->m_strID.CompareNoCase(TGM_NUCLEUS) && (m_bCreateExternal == false && m_pXobj->m_pDisp == NULL) && m_bEraseBkgnd)
 	{
-		CString strText = _T("");
 		bit.LoadBitmap(IDB_BITMAP_DESIGNER);
 		CBrush br(&bit);
 		pDC->FillRect(&rt, &br);
-		if (bInDesignState && g_pCosmos->m_pDesignXobj == m_pXobj)
-		{
-			pDC->SetTextColor(RGB(255, 0, 255));
-			strText = _T("\n\n  ") + g_pCosmos->m_strXobjSelectedText;
-		}
-		else
-		{
-			CComBSTR bstrCaption(L"");
-			m_pXobj->get_Attribute(CComBSTR(L"caption"), &bstrCaption);
-			CString strInfo = _T("\n\n  ");
-			if (bInDesignState)
-			{
-				strInfo = strInfo + g_pCosmos->m_strDesignerTip1;
-			}
-			strInfo = strInfo + _T("\n  ") + g_pCosmos->m_strDesignerTip2;
-			strText.Format(strInfo, m_pXobj->m_strName, CString(OLE2T(bstrCaption)));
-			pDC->SetTextColor(RGB(255, 255, 255));
-		}
-
-		pDC->SetBkMode(TRANSPARENT);
-		pDC->DrawText(strText, &rt, DT_LEFT);
 	}
 	return true;
 }
@@ -297,11 +266,6 @@ BOOL CXobjHelper::PreTranslateMessage(MSG* pMsg)
 
 void CXobjHelper::OnDestroy()
 {
-	if (g_pCosmos->m_pDesignXobj == m_pXobj)
-	{
-		g_pCosmos->m_pDesignXobj = NULL;
-	}
-
 	m_pXobj->Fire_Destroy();
 	CWnd::OnDestroy();
 }

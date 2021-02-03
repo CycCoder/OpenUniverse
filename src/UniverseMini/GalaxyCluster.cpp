@@ -728,21 +728,10 @@ STDMETHODIMP CGalaxyCluster::ObserveGalaxys(BSTR bstrGalaxys, BSTR bstrKey, BSTR
 
 STDMETHODIMP CGalaxyCluster::get_CurrentDesignGalaxyType(GalaxyType* pVal)
 {
-	if (g_pCosmos->m_pDesignXobj)
-	{
-		CGalaxy* pGalaxy = g_pCosmos->m_pDesignXobj->m_pXobjShareData->m_pGalaxy;
-		*pVal = pGalaxy->m_nGalaxyType;
-	}
-	else
-		*pVal = NOGalaxy;
-
 	return S_OK;
 }
 
 STDMETHODIMP CGalaxyCluster::get_CurrentDesignNode(IXobj** pVal)
 {
-	if (g_pCosmos->m_pDesignXobj)
-		*pVal = g_pCosmos->m_pDesignXobj;
-
 	return S_OK;
 }
