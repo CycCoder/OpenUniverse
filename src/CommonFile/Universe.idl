@@ -310,8 +310,7 @@ interface IXobj : IDispatch {
 	[propput, id(18), helpstring("property Tag")] HRESULT Tag([in] VARIANT vVar);
 	[propget, id(19), helpstring("property OuterXml")] HRESULT OuterXml([out, retval] BSTR* pVal);
 	[propget, id(20), helpstring("property Key")] HRESULT Key([out, retval] BSTR* pVal);
-	[propget, id(21)] HRESULT DockObj(BSTR bstrName, [out, retval] LONGLONG* pVal);
-	[propput, id(21)] HRESULT DockObj(BSTR bstrName, [in] LONGLONG newVal);
+	[propget, id(21), helpstring("property WebPage")] HRESULT WebPage([out, retval] IWebPage** pVal);
 	[propget, id(22)] HRESULT NameAtWindowPage([out, retval] BSTR* pVal);
 	[propget, id(23), helpstring("property Width")] HRESULT Width([out, retval] LONG* pVal);
 	[propget, id(24), helpstring("property Height")] HRESULT Height([out, retval] LONG* pVal);
@@ -345,7 +344,6 @@ interface IXobj : IDispatch {
 	[propput, id(40)] HRESULT MasterCol([in] int newVal);
 	[propget, id(41), helpstring("property Office Object")] HRESULT OfficeObj([out, retval] IDispatch** pVal);
 	[propput, id(42)] HRESULT SaveToConfigFile([in] VARIANT_BOOL newVal);
-	[propget, id(43), helpstring("property WebPage")] HRESULT WebPage([out, retval] IWebPage** pVal);
 
 	[id(100), hidden] HRESULT ActiveTabPage(IXobj* pXobj);
 	[id(101), helpstring("method GetNodes")] HRESULT GetXobjs([in]BSTR bstrName, [out]IXobj** ppXobj, [out]IXobjCollection** ppXobjs, [out, retval]long* pCount);
@@ -451,17 +449,13 @@ interface IGalaxy : IDispatch {
 	[propget, id(2), helpstring("property VisibleXobj")] HRESULT VisibleXobj([out, retval] IXobj** pVal);
 	[propget, id(3)] HRESULT CurrentNavigateKey([out, retval] BSTR* pVal);
 	[propget, id(4)] HRESULT GalaxyCluster([out, retval] IGalaxyCluster** pVal);
-	[propget, id(5)] HRESULT GalaxyData(BSTR bstrKey, [out, retval] VARIANT* pVal);
-	[propput, id(5)] HRESULT GalaxyData(BSTR bstrKey, [in] VARIANT newVal);
-	[propget, id(6), hidden] HRESULT DesignerState([out, retval] VARIANT_BOOL* pVal);
-	[propput, id(6), hidden] HRESULT DesignerState([in] VARIANT_BOOL newVal);
+	[propget, id(5)] HRESULT HostBrowser([out, retval] IBrowser** ppChromeWebBrowser);
+	[propget, id(6)] HRESULT HostWebPage([out, retval] IWebPage** ppChromeWebPage);
 	[propget, id(7), helpstring("")] HRESULT Count([out, retval]long* pCount);
 	[propget, id(8), helpstring("property RootXobjs")] HRESULT RootXobjs([out, retval]IXobjCollection** ppXobjColletion);
 	[propget, id(9)] HRESULT GalaxyXML([out, retval] BSTR* pVal);
 	[propget, id(11)] HRESULT GalaxyType([out, retval] GalaxyType* pVal);
 	[propget, id(12)] HRESULT Name([out, retval] BSTR* pVal);
-	[propget, id(13)] HRESULT HostBrowser([out, retval] IBrowser** ppChromeWebBrowser);
-	[propget, id(14)] HRESULT HostWebPage([out, retval] IWebPage** ppChromeWebPage);
 
 	[id(101), helpstring("method Detach")] HRESULT Detach(void);
 	[id(102), helpstring("method Attach")] HRESULT Attach(void);

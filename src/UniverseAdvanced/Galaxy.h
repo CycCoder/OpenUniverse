@@ -266,7 +266,6 @@ public:
 	bool											m_bDockPane = false;
 	BOOL											m_bTabbedMDIClient;
 	BOOL											m_bDetached;
-	BOOL											m_bDesignerState;
 	BOOL											m_bMDIChild;
 	GalaxyType										m_nGalaxyType;
 
@@ -373,10 +372,6 @@ private:
 	STDMETHOD(get_CurrentNavigateKey)(BSTR* pVal);
 	STDMETHOD(get_VisibleXobj)(IXobj** pVal);
 	STDMETHOD(get_RootXobjs)(IXobjCollection** pXobjColletion);
-	STDMETHOD(get_GalaxyData)(BSTR bstrKey, VARIANT* pVal);
-	STDMETHOD(put_GalaxyData)(BSTR bstrKey, VARIANT newVal);
-	STDMETHOD(get_DesignerState)(VARIANT_BOOL* pVal);
-	STDMETHOD(put_DesignerState)(VARIANT_BOOL newVal);
 	STDMETHOD(get_GalaxyType)(GalaxyType* pVal);
 	STDMETHOD(get_Name)(BSTR* pVal);
 	STDMETHOD(get_HostBrowser)(IBrowser** ppChromeWebBrowser);

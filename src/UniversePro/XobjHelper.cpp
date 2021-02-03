@@ -171,9 +171,6 @@ int CXobjHelper::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message)
 		if (::IsWindow(hMenuWnd))
 			::PostMessage(hMenuWnd, WM_CLOSE, 0, 0);
 	}
-	BOOL b = pGalaxy->m_bDesignerState;
-	if (m_pXobj->m_nViewType == BlankView && m_pXobj->m_strObjTypeID == _T(""))
-		b = true;
 	if (m_pXobj && m_pXobj->m_pXobjShareData->m_pGalaxyCluster)
 		m_pXobj->m_pXobjShareData->m_pGalaxyCluster->Fire_NodeMouseActivate(m_pXobj);
 
@@ -246,7 +243,6 @@ BOOL CXobjHelper::OnEraseBkgnd(CDC* pDC)
 	if (m_pXobj->m_nViewType != BlankView)
 		return true;
 	CGalaxy* pGalaxy = m_pXobj->m_pXobjShareData->m_pGalaxy;
-	BOOL bInDesignState = pGalaxy->m_bDesignerState;
 	CBitmap bit;
 	RECT rt;
 	GetClientRect(&rt);
@@ -533,11 +529,6 @@ LRESULT CXobjHelper::OnCosmosMsg(WPARAM wParam, LPARAM lParam)
 					if (pIOleInPlaceActiveObject)
 						m_pOleInPlaceActiveObject = pIOleInPlaceActiveObject.Detach();
 					m_Wnd.Detach();
-					if (m_mapDockCtrl.size())
-					{
-						HWND hPage = m_pXobj->m_pXobjShareData->m_pGalaxyCluster->m_hWnd;
-						::SendMessage(hPage, WM_COSMOSMSG, (WPARAM)this, 1963);
-					}
 				}
 				else
 				{
@@ -711,7 +702,6 @@ LRESULT CXobjHelper::OnCosmosMsg(WPARAM wParam, LPARAM lParam)
 		((CXobj*)pXobj)->m_pParentObj = m_pXobj->m_pParentObj;
 		((CXobj*)pXobj)->m_pXobjShareData->m_pOfficeObj = m_pXobj->m_pXobjShareData->m_pOfficeObj;
 		m_pXobj->m_pXobjShareData->m_mapLayoutNodes[((CXobj*)pXobj)->m_strName] = (CXobj*)pXobj;
-		((CGalaxy*)pGalaxy)->m_bDesignerState = m_pXobj->m_pXobjShareData->m_pGalaxy->m_bDesignerState;
 		CString strXml = ((CXobj*)pXobj)->m_pHostParse->xml();
 		CTangramXmlParse* pNew = ((CXobj*)pXobj)->m_pHostParse;
 		CTangramXmlParse* pOld = pOldNode->m_pHostParse;

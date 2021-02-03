@@ -157,9 +157,6 @@ int CXobjHelper::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message)
 		if (::IsWindow(hMenuWnd))
 			::PostMessage(hMenuWnd, WM_CLOSE, 0, 0);
 	}
-	BOOL b = pGalaxy->m_bDesignerState;
-	if (m_pXobj->m_nViewType == BlankView && m_pXobj->m_strObjTypeID == _T(""))
-		b = true;
 
 	if ((m_pXobj->m_nViewType == TabGrid || m_pXobj->m_nViewType == Grid))
 	{
@@ -201,13 +198,6 @@ int CXobjHelper::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message)
 		return MA_NOACTIVATE;
 	}
 
-	if (b && m_bCreateExternal == false 
-		&& m_pXobj->m_strID.CompareNoCase(TGM_NUCLEUS)
-		&&m_pXobj->m_pDisp == NULL)
-	{
-		Invalidate(true);
-	}
-
 	if (m_bCreateExternal == false)
 	{
 		if (pHtmlWnd)
@@ -237,7 +227,6 @@ BOOL CXobjHelper::OnEraseBkgnd(CDC* pDC)
 	if (m_pXobj->m_nViewType != BlankView)
 		return true;
 	CGalaxy* pGalaxy = m_pXobj->m_pXobjShareData->m_pGalaxy;
-	BOOL bInDesignState = pGalaxy->m_bDesignerState;
 	CBitmap bit;
 	RECT rt;
 	GetClientRect(&rt);

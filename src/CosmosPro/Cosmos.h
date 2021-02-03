@@ -853,12 +853,6 @@ namespace Universe
 			}
 		}
 
-		property Object^ FrameData[String ^]
-		{
-			Object ^ get(String ^ iIndex);
-			void set(String^ iIndex, Object^ newVal);
-		}
-
 		property String^ Name
 		{
 			String^ get()

@@ -409,9 +409,6 @@ void CCosmos::SetMainWnd(HWND hMain)
 
 IWebPage* CCosmos::GetWebPageFromForm(HWND hForm)
 {
-	auto it = m_mapFormWebPage.find(hForm);
-	if (it != m_mapFormWebPage.end())
-		return it->second;
 	return nullptr;
 }
 

@@ -63,8 +63,8 @@
  * https://www.tangram.dev
  *******************************************************************************/
 
-// Galaxy.cpp : implementation file of CGalaxy
-//
+ // Galaxy.cpp : implementation file of CGalaxy
+ //
 
 #include "stdafx.h"
 #include "UniverseApp.h"
@@ -81,14 +81,14 @@ CWinForm::CWinForm(void)
 	m_bMdiForm = false;
 	m_pWormhole = nullptr;
 	m_pOwnerHtmlWnd = nullptr;
-	m_strXml = m_strKey =  _T("");
+	m_strXml = m_strKey = _T("");
 }
 
 CWinForm::~CWinForm(void)
 {
 }
 
-void CWinForm :: SendMessage()
+void CWinForm::SendMessage()
 {
 	if (m_pWormhole == nullptr)
 	{
@@ -248,14 +248,14 @@ LRESULT CWinForm::OnGetMe(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 		break;
 	case 20201029:
 	{
-		if(wParam==0)
+		if (wParam == 0)
 			m_bMainForm = true;
 		else
 		{
 			g_pCosmos->m_mapNeedQueryOnClose[m_hWnd] = this;
 		}
 	}
-		break;
+	break;
 	}
 	return DefWindowProc(uMsg, wParam, lParam);
 }
@@ -336,7 +336,6 @@ CGalaxy::CGalaxy()
 	m_bMDIChild = false;
 	m_bDetached = false;
 	m_pWebPageWnd = nullptr;
-	m_bDesignerState = true;
 	m_hPWnd = nullptr;
 	m_pGalaxyCluster = nullptr;
 	m_pWorkXobj = nullptr;
@@ -395,13 +394,12 @@ void CGalaxy::HostPosChanged()
 		::PostMessage(m_hWnd, WM_COSMOSMSG, 0, 20210129);
 	CXobj* pTopXobj = m_pWorkXobj;
 	CGalaxy* _pGalaxy = this;
-	if (!_pGalaxy->m_bDesignerState)
-		while (pTopXobj && pTopXobj->m_pRootObj != pTopXobj)
-		{
-			_pGalaxy = pTopXobj->m_pRootObj->m_pXobjShareData->m_pGalaxy;
-			hwnd = _pGalaxy->m_hWnd;
-			pTopXobj = _pGalaxy->m_pWorkXobj;
-		}
+	while (pTopXobj && pTopXobj->m_pRootObj != pTopXobj)
+	{
+		_pGalaxy = pTopXobj->m_pRootObj->m_pXobjShareData->m_pGalaxy;
+		hwnd = _pGalaxy->m_hWnd;
+		pTopXobj = _pGalaxy->m_pWorkXobj;
+	}
 	if (::IsWindow(hwnd) == false)
 		return;
 	HWND hPWnd = ::GetParent(m_hWnd);
@@ -545,16 +543,6 @@ STDMETHODIMP CGalaxy::get_RootXobjs(IXobjCollection** pXobjColletion)
 	}
 
 	return m_pRootNodes->QueryInterface(IID_IXobjCollection, (void**)pXobjColletion);
-}
-
-STDMETHODIMP CGalaxy::get_GalaxyData(BSTR bstrKey, VARIANT* pVal)
-{
-	return S_OK;
-}
-
-STDMETHODIMP CGalaxy::put_GalaxyData(BSTR bstrKey, VARIANT newVal)
-{
-	return S_OK;
 }
 
 STDMETHODIMP CGalaxy::Detach(void)
@@ -767,7 +755,7 @@ STDMETHODIMP CGalaxy::Observe(BSTR bstrKey, BSTR bstrXml, IXobj** ppRetXobj)
 
 	g_pCosmos->m_strCurrentKey = _T("");
 	*ppRetXobj = (IXobj*)m_pWorkXobj;
-	for (auto &it : g_pCosmos->m_mapCosmosAppProxy)
+	for (auto& it : g_pCosmos->m_mapCosmosAppProxy)
 	{
 		it.second->OnObserverComplete(m_hHostWnd, strXml, m_pWorkXobj);
 	}
@@ -1008,29 +996,29 @@ LRESULT CGalaxy::OnCosmosMsg(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 {
 	switch (lParam)
 	{
-		case 20210129:
+	case 20210129:
+	{
+		if (::IsWindowVisible(m_hWnd) == false)
 		{
-			if (::IsWindowVisible(m_hWnd) == false)
+			if (::IsWindowVisible(m_pBindingXobj->m_pHostWnd->m_hWnd))
 			{
-				if (::IsWindowVisible(m_pBindingXobj->m_pHostWnd->m_hWnd))
-				{
-					HostPosChanged();
-					::InvalidateRect(::GetAncestor(m_hWnd, GA_ROOT), nullptr, true);
-				}
+				HostPosChanged();
+				::InvalidateRect(::GetAncestor(m_hWnd, GA_ROOT), nullptr, true);
 			}
 		}
-		break;
-		case 20180115:
-		{
-			HostPosChanged();
-		}
-		break;
-		case WM_BROWSERLAYOUT:
-		{
-			CWebPage* pWebWnd = (CWebPage*)::GetWindowLongPtr(m_hWnd, GWLP_USERDATA);
-			::PostMessage(::GetParent(pWebWnd->m_hWnd), WM_BROWSERLAYOUT, 0, 1);
-		}
-		break;
+	}
+	break;
+	case 20180115:
+	{
+		HostPosChanged();
+	}
+	break;
+	case WM_BROWSERLAYOUT:
+	{
+		CWebPage* pWebWnd = (CWebPage*)::GetWindowLongPtr(m_hWnd, GWLP_USERDATA);
+		::PostMessage(::GetParent(pWebWnd->m_hWnd), WM_BROWSERLAYOUT, 0, 1);
+	}
+	break;
 	}
 	return DefWindowProc(uMsg, wParam, lParam);
 }
@@ -1181,22 +1169,6 @@ LRESULT CGalaxy::OnParentNotify(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 {
 	g_pCosmos->m_pGalaxy = nullptr;
 	return DefWindowProc(uMsg, wParam, lParam);
-}
-
-STDMETHODIMP CGalaxy::get_DesignerState(VARIANT_BOOL* pVal)
-{
-	if (m_bDesignerState)
-		*pVal = true;
-	else
-		*pVal = false;
-
-	return S_OK;
-}
-
-STDMETHODIMP CGalaxy::put_DesignerState(VARIANT_BOOL newVal)
-{
-	m_bDesignerState = newVal;
-	return S_OK;
 }
 
 STDMETHODIMP CGalaxy::GetXml(BSTR bstrRootName, BSTR* bstrRet)

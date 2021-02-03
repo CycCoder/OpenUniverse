@@ -558,7 +558,6 @@ namespace OfficePlus
 					}
 					else
 					{
-						pGalaxy->m_bDesignerState = false;
 						pWnd->m_bDesignState = false;
 					}
 				}
