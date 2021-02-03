@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022           *
+ *           Web Runtime for Application - Version 1.0.0.202102030023           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -70,7 +70,7 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg int OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message);
 	afx_msg LRESULT OnActivePage(WPARAM wParam,LPARAM lParam);
-	afx_msg LRESULT OnSplitterNodeAdd(WPARAM wParam,LPARAM lParam);
+	afx_msg LRESULT OnCosmosMsg(WPARAM wParam,LPARAM lParam);
 	afx_msg LRESULT OnActiveTangramObj(WPARAM wParam,LPARAM lParam);
 	afx_msg LRESULT OnGetCosmosObj(WPARAM wParam,LPARAM lParam);
 	afx_msg LRESULT OnSplitterCreated(WPARAM wParam,LPARAM lParam);

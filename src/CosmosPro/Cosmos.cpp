@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022
+ *           Web Runtime for Application - Version 1.0.0.202102030023
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -1144,25 +1144,6 @@ namespace Universe
                     return frame->Observe(strKey, BSTR2STRING(theApp.m_pCosmosImpl->m_strNewDocXml));
                 }
                 return frame->Observe(strKey, strXml);
-            }
-        }
-        return nullptr;
-    }
-
-    Browser^ Cosmos::ActiveBrowser()
-    {
-        IBrowser* pBrowser = nullptr;
-        theApp.m_pCosmos->get_ActiveChromeBrowserWnd(&pBrowser);
-        if (pBrowser)
-        {
-            auto it = theAppProxy.m_mapWebBrowser.find(pBrowser);
-            if (it != theAppProxy.m_mapWebBrowser.end())
-                return it->second;
-            else
-            {
-                Browser^ _pBrowser = gcnew Browser(pBrowser);
-                theAppProxy.m_mapWebBrowser[pBrowser] = _pBrowser;
-                return _pBrowser;
             }
         }
         return nullptr;

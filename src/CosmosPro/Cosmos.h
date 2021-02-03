@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022
+ *           Web Runtime for Application - Version 1.0.0.202102030023
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -984,7 +984,6 @@ namespace Universe
 		static Dictionary<String^, Type^>^ GetFormTypesFromAssembly(String^ assemblyFilePath);
 		static Dictionary<String^, Type^>^ GetFormTypesFromDirectory(String^ directoryPath);
 		static List<String^>^ FindFiles(String^ rootPath, String^ fileSpec, bool recursive);
-		static Browser^ ActiveBrowser();
 		static Browser^ GetHostBrowser(Object^ obj);
 		static Xobj^ GetXobjFromHandle(IntPtr handle);
 		static Xobj^ GetXobjFromControl(Control^ ctrl);

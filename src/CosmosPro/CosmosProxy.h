@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022
+ *           Web Runtime for Application - Version 1.0.0.202102030023
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -128,13 +128,10 @@ private:
 
 	virtual void OnCLRHostExit();
 	CWPFObj* CreateWPFControl(IXobj* pXobj, HWND hPWnd, UINT nID);
-	HRESULT ActiveCLRMethod(BSTR bstrObjID, BSTR bstrMethod, BSTR bstrParam, BSTR bstrData);
-	HRESULT ActiveCLRMethod(IDispatch* pCLRObj, BSTR bstrMethod, BSTR bstrParam, BSTR bstrData);
 	HRESULT ProcessCtrlMsg(HWND hCtrl, bool bShiftKey);
 	BOOL ProcessFormMsg(HWND hFormWnd, LPMSG lpMsg, int nMouseButton);
 	IDispatch* CreateObject(BSTR bstrObjID, HWND hParent, IXobj* pHostNode);
 	int IsWinForm(HWND hWnd);
-	IDispatch* GetCLRControl(IDispatch* CtrlDisp, BSTR bstrNames);
 	BSTR GetCtrlName(IDispatch* pCtrl);
 	HWND GetMDIClientHandle(IDispatch* pMDICtrl);
 	IDispatch* GetCtrlByName(IDispatch* CtrlDisp, BSTR bstrName, bool bFindInChild);

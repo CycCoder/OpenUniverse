@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022
+ *           Web Runtime for Application - Version 1.0.0.202102030023
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -119,7 +119,7 @@ BEGIN_MESSAGE_MAP(CGridWnd, CSplitterWnd)
 	ON_WM_MOUSEACTIVATE()
 	ON_MESSAGE(WM_TABCHANGE, OnActivePage)
 	ON_MESSAGE(WM_HUBBLE_GETNODE, OnGetCosmosObj)
-	ON_MESSAGE(WM_COSMOSMSG, OnSplitterNodeAdd)
+	ON_MESSAGE(WM_COSMOSMSG, OnCosmosMsg)
 	ON_MESSAGE(WM_TGM_SETACTIVEPAGE, OnActiveTangramObj)
 	ON_MESSAGE(WM_HOSTNODEFORSPLITTERCREATED, OnSplitterCreated)
 END_MESSAGE_MAP()
@@ -248,7 +248,7 @@ void CGridWnd::TrackColumnSize(int x, int col)
 	}
 }
 
-LRESULT CGridWnd::OnSplitterNodeAdd(WPARAM wParam, LPARAM lParam)
+LRESULT CGridWnd::OnCosmosMsg(WPARAM wParam, LPARAM lParam)
 {
 	if (lParam == 1992 || wParam == 0x01000 || wParam == 0 )
 	{

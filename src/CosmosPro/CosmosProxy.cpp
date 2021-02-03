@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022
+ *           Web Runtime for Application - Version 1.0.0.202102030023
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -1559,26 +1559,6 @@ void* CCosmosProxy::Extend(CString strKey, CString strData, CString strFeatures)
 	return nullptr;
 }
 
-HRESULT CCosmosProxy::ActiveCLRMethod(BSTR bstrObjID, BSTR bstrMethod, BSTR bstrParam, BSTR bstrData)
-{
-	String^ strObjID = BSTR2STRING(bstrObjID);
-	String^ strMethod = BSTR2STRING(bstrMethod);
-	String^ strData = BSTR2STRING(bstrData);
-	cli::array<Object^, 1>^ pObjs = { BSTR2STRING(bstrParam), BSTR2STRING(bstrData) };
-	Universe::Cosmos::ActiveMethod(strObjID, strMethod, pObjs);
-	return S_OK;
-}
-
-HRESULT CCosmosProxy::ActiveCLRMethod(IDispatch* pCLRObj, BSTR bstrMethod, BSTR bstrParam, BSTR bstrData)
-{
-	Object^ obj = Marshal::GetObjectForIUnknown((IntPtr)pCLRObj);
-	String^ strMethod = BSTR2STRING(bstrMethod);
-	String^ strData = BSTR2STRING(bstrData);
-	cli::array<Object^, 1>^ pObjs = {};
-	Universe::Cosmos::ActiveObjectMethod(obj, strMethod, pObjs);
-	return S_OK;
-}
-
 IDispatch* CCosmosProxy::CreateCLRObj(CString bstrObjID)
 {
 	if (bstrObjID.CompareNoCase(_T("chromert")) == 0)
@@ -2259,75 +2239,6 @@ int CCosmosProxy::IsWinForm(HWND hWnd)
 		}
 	}
 	return 0;
-}
-
-IDispatch* CCosmosProxy::GetCLRControl(IDispatch* CtrlDisp, BSTR bstrNames)
-{
-	CString strNames = OLE2T(bstrNames);
-	if (strNames != _T(""))
-	{
-		int nPos = strNames.Find(_T(","));
-		if (nPos == -1)
-		{
-			Control^ pCtrl = (Control^)Marshal::GetObjectForIUnknown((IntPtr)CtrlDisp);
-			if (pCtrl != nullptr)
-			{
-				Control::ControlCollection^ Ctrls = pCtrl->Controls;
-				pCtrl = Ctrls[BSTR2STRING(bstrNames)];
-				if (pCtrl == nullptr)
-				{
-					int nIndex = _wtoi(OLE2T(bstrNames));
-					pCtrl = Ctrls[nIndex];
-				}
-				if (pCtrl != nullptr)
-					return (IDispatch*)Marshal::GetIUnknownForObject(pCtrl).ToPointer();
-			}
-			return S_OK;
-		}
-
-		Control^ pCtrl = (Control^)Marshal::GetObjectForIUnknown((IntPtr)CtrlDisp);
-		while (nPos != -1)
-		{
-			CString strName = strNames.Left(nPos);
-			if (strName != _T(""))
-			{
-				if (pCtrl != nullptr)
-				{
-					Control^ pCtrl2 = pCtrl->Controls[BSTR2STRING(strName)];
-					if (pCtrl2 == nullptr)
-					{
-						if (pCtrl->Controls->Count > 0)
-							pCtrl2 = pCtrl->Controls[_wtoi(strName)];
-					}
-					if (pCtrl2 != nullptr)
-						pCtrl = pCtrl2;
-					else
-						return S_OK;
-				}
-				else
-					return S_OK;
-			}
-			strNames = strNames.Mid(nPos + 1);
-			nPos = strNames.Find(_T(","));
-			if (nPos == -1)
-			{
-				if (pCtrl != nullptr)
-				{
-					Control^ pCtrl2 = pCtrl->Controls[BSTR2STRING(strNames)];
-					if (pCtrl2 == nullptr)
-					{
-						if (pCtrl->Controls->Count > 0)
-							pCtrl2 = pCtrl->Controls[_wtoi(strName)];
-					}
-					if (pCtrl2 == nullptr)
-						return S_OK;
-					if (pCtrl2 != nullptr)
-						return (IDispatch*)Marshal::GetIUnknownForObject(pCtrl2).ToPointer();
-				}
-			}
-		}
-	}
-	return NULL;
 }
 
 BSTR CCosmosProxy::GetCtrlName(IDispatch* _pCtrl)

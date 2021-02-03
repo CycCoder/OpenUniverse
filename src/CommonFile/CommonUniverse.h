@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022
+ *           Web Runtime for Application - Version 1.0.0.202102030023
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -508,7 +508,6 @@ namespace CommonUniverse {
 		virtual BOOL ProcessFormMsg(HWND hFormWnd, LPMSG lpMsg, int nMouseButton) { return false; }
 		virtual IDispatch* CreateObject(BSTR bstrObjID, HWND hParent, IXobj* pHostNode) { return nullptr; }
 		virtual int IsWinForm(HWND hWnd) { return 0; }
-		virtual IDispatch* GetCLRControl(IDispatch* CtrlDisp, BSTR bstrNames) { return nullptr; }
 		virtual BSTR GetCtrlName(IDispatch* pCtrl) { return CComBSTR(""); }
 		virtual IDispatch* GetCtrlFromHandle(HWND hWnd) { return nullptr; }
 		virtual HWND GetMDIClientHandle(IDispatch* pMDICtrl) { return NULL; }
@@ -649,7 +648,6 @@ namespace CommonUniverse {
 		map<HWND, IGalaxyCluster*>				m_mapGalaxy2GalaxyCluster;
 		map<HWND, IGalaxyCluster*>				m_mapWindowPage;
 		map<CString, CComVariant>				m_mapValInfo;
-		map<CString, __int64>					m_mapTemplateInfo;
 		map<CString, ICosmos*>					m_mapRemoteCosmos;
 		map<CString, IUniverseAppProxy*>		m_mapCosmosAppProxy;
 		map<CString, ICosmosWindowProvider*>	m_mapWindowProvider;

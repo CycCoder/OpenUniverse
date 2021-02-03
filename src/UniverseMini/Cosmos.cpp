@@ -1,5 +1,5 @@
 ﻿/********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022
+ *           Web Runtime for Application - Version 1.0.0.202102030023
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  * There are Three Key Features of Webruntime:
@@ -649,11 +649,6 @@ CXobj* CCosmos::ObserveEx(long hWnd, CString strExXml, CString strXml)
 	return pRootXobj;
 }
 
-STDMETHODIMP CCosmos::get_ActiveChromeBrowserWnd(IBrowser** ppChromeWebBrowser)
-{
-	return S_OK;
-}
-
 STDMETHODIMP CCosmos::get_HostChromeBrowserWnd(IBrowser** ppChromeWebBrowser)
 {
 	return S_OK;
@@ -682,14 +677,6 @@ STDMETHODIMP CCosmos::get_RootNodes(IXobjCollection** pXobjColletion)
 		}
 	}
 	return m_pRootNodes->QueryInterface(IID_IXobjCollection, (void**)pXobjColletion);
-}
-
-STDMETHODIMP CCosmos::get_CurrentActiveXobj(IXobj** pVal)
-{
-	if (m_pActiveXobj)
-		*pVal = m_pActiveXobj;
-
-	return S_OK;
 }
 
 STDMETHODIMP CCosmos::SetHostFocus(void)
@@ -745,16 +732,6 @@ STDMETHODIMP CCosmos::get_RemoteHelperHWND(LONGLONG* pVal)
 	//		m_hChildHostWnd = ::CreateWindowEx(NULL, _T("Cosmos Xobj Class"), _T(""), WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE | WS_CHILD, 0, 0, 0, 0, m_hHostWnd, NULL, theUniverse.m_hInstance, NULL);
 	//}
 	//*pVal = (LONGLONG)m_hHostWnd;
-	return S_OK;
-}
-
-STDMETHODIMP CCosmos::get_DocTemplate(BSTR bstrKey, LONGLONG* pVal)
-{
-	CString strKey = OLE2T(bstrKey);
-	strKey.MakeLower();
-	auto it = m_mapTemplateInfo.find(strKey);
-	if (it != m_mapTemplateInfo.end())
-		*pVal = (LONGLONG)it->second;
 	return S_OK;
 }
 
@@ -883,27 +860,6 @@ STDMETHODIMP CCosmos::put_AppKeyValue(BSTR bstrKey, VARIANT newVal)
 	return S_OK;
 }
 
-STDMETHODIMP CCosmos::NavigateNode(IXobj* _pXobj, BSTR bstrBrowserID, BSTR bstrXml, IXobj** pRet)
-{
-	CXobj* pXobj = (CXobj*)_pXobj;
-	if (pXobj->m_nViewType == Grid)
-	{
-		IXobj* pRet = nullptr;
-		pXobj->m_pParentObj->ObserveEx(pXobj->m_nRow, pXobj->m_nCol, bstrBrowserID, bstrXml, &pRet);
-		if (pRet)
-		{
-			return S_OK;
-		}
-	}
-	return S_OK;
-}
-
-STDMETHODIMP CCosmos::MessageBox(LONGLONG hWnd, BSTR bstrContext, BSTR bstrCaption, long nStyle, int* nRet)
-{
-	*nRet = ::MessageBox((HWND)hWnd, OLE2T(bstrContext), OLE2T(bstrCaption), nStyle);
-	return S_OK;
-}
-
 CString CCosmos::GetNewGUID()
 {
 	GUID   m_guid;
@@ -920,36 +876,6 @@ CString CCosmos::GetNewGUID()
 
 	return strGUID;
 }
-
-STDMETHODIMP CCosmos::NewGUID(BSTR* retVal)
-{
-	*retVal = GetNewGUID().AllocSysString();
-	return S_OK;
-}
-
-STDMETHODIMP CCosmos::LoadDocComponent(BSTR bstrLib, LONGLONG* llAppProxy)
-{
-	return S_OK;
-}
-
-STDMETHODIMP CCosmos::GetCLRControl(IDispatch* CtrlDisp, BSTR bstrNames, IDispatch** ppRetDisp)
-{
-	//CString strNames = OLE2T(bstrNames);
-	//if (m_pCLRProxy && strNames != _T("") && CtrlDisp)
-	//	*ppRetDisp = m_pCLRProxy->GetCLRControl(CtrlDisp, bstrNames);
-
-	return S_OK;
-}
-//
-//STDMETHODIMP CCosmos::ActiveCLRMethod(BSTR bstrObjID, BSTR bstrMethod, BSTR bstrParam, BSTR bstrData)
-//{
-//	LoadCLR();
-//
-//	if (m_pCLRProxy)
-//		m_pCLRProxy->ActiveCLRMethod(bstrObjID, bstrMethod, bstrParam, bstrData);
-//
-//	return S_OK;
-//}
 
 STDMETHODIMP CCosmos::CreateGalaxyCluster(LONGLONG hWnd, IGalaxyCluster** ppGalaxyCluster)
 {

@@ -1,5 +1,5 @@
 ﻿/********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022           *
+ *           Web Runtime for Application - Version 1.0.0.202102030023           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  *
@@ -2195,16 +2195,6 @@ CXobj* CCosmos::ObserveEx(long hWnd, CString strExXml, CString strXml)
 	return pRootXobj;
 }
 
-STDMETHODIMP CCosmos::get_ActiveChromeBrowserWnd(IBrowser** ppChromeWebBrowser)
-{
-	if (m_pActiveBrowser->m_pProxy)
-	{
-		CBrowser* pBrowserWnd = (CBrowser*)m_pActiveBrowser->m_pProxy;
-		pBrowserWnd->QueryInterface(__uuidof(IBrowser), (void**)ppChromeWebBrowser);
-	}
-	return S_OK;
-}
-
 STDMETHODIMP CCosmos::get_HostChromeBrowserWnd(IBrowser** ppChromeWebBrowser)
 {
 	if (::GetModuleHandle(L"chrome_elf.dll"))
@@ -2241,14 +2231,6 @@ STDMETHODIMP CCosmos::get_RootNodes(IXobjCollection** pXobjColletion)
 		}
 	}
 	return m_pRootNodes->QueryInterface(IID_IXobjCollection, (void**)pXobjColletion);
-}
-
-STDMETHODIMP CCosmos::get_CurrentActiveXobj(IXobj** pVal)
-{
-	if (m_pActiveXobj)
-		*pVal = m_pActiveXobj;
-
-	return S_OK;
 }
 
 STDMETHODIMP CCosmos::SetHostFocus(void)
@@ -2663,16 +2645,6 @@ STDMETHODIMP CCosmos::get_RemoteHelperHWND(LONGLONG* pVal)
 	return S_OK;
 }
 
-STDMETHODIMP CCosmos::get_DocTemplate(BSTR bstrKey, LONGLONG* pVal)
-{
-	CString strKey = OLE2T(bstrKey);
-	strKey.MakeLower();
-	auto it = m_mapTemplateInfo.find(strKey);
-	if (it != m_mapTemplateInfo.end())
-		*pVal = (LONGLONG)it->second;
-	return S_OK;
-}
-
 void CCosmos::InitDesignerTreeCtrl(CString strXml)
 {
 	if (strXml != _T("") && m_pDocDOMTree)
@@ -2893,27 +2865,6 @@ STDMETHODIMP CCosmos::put_AppKeyValue(BSTR bstrKey, VARIANT newVal)
 	return S_OK;
 }
 
-STDMETHODIMP CCosmos::NavigateNode(IXobj* _pXobj, BSTR bstrBrowserID, BSTR bstrXml, IXobj** pRet)
-{
-	CXobj* pXobj = (CXobj*)_pXobj;
-	if (pXobj->m_nViewType == Grid)
-	{
-		IXobj* pRet = nullptr;
-		pXobj->m_pParentObj->ObserveEx(pXobj->m_nRow, pXobj->m_nCol, bstrBrowserID, bstrXml, &pRet);
-		if (pRet)
-		{
-			return S_OK;
-		}
-	}
-	return S_OK;
-}
-
-STDMETHODIMP CCosmos::MessageBox(LONGLONG hWnd, BSTR bstrContext, BSTR bstrCaption, long nStyle, int* nRet)
-{
-	*nRet = ::MessageBox((HWND)hWnd, OLE2T(bstrContext), OLE2T(bstrCaption), nStyle);
-	return S_OK;
-}
-
 CString CCosmos::GetNewGUID()
 {
 	GUID   m_guid;
@@ -2965,36 +2916,6 @@ CString CCosmos::GetPropertyFromObject(IDispatch* pObj, CString strPropertyName)
 		}
 	}
 	return strRet;
-}
-
-STDMETHODIMP CCosmos::NewGUID(BSTR* retVal)
-{
-	*retVal = GetNewGUID().AllocSysString();
-	return S_OK;
-}
-
-STDMETHODIMP CCosmos::LoadDocComponent(BSTR bstrLib, LONGLONG* llAppProxy)
-{
-	return S_OK;
-}
-
-STDMETHODIMP CCosmos::GetCLRControl(IDispatch* CtrlDisp, BSTR bstrNames, IDispatch** ppRetDisp)
-{
-	CString strNames = OLE2T(bstrNames);
-	if (m_pCLRProxy && strNames != _T("") && CtrlDisp)
-		*ppRetDisp = m_pCLRProxy->GetCLRControl(CtrlDisp, bstrNames);
-
-	return S_OK;
-}
-
-STDMETHODIMP CCosmos::ActiveCLRMethod(BSTR bstrObjID, BSTR bstrMethod, BSTR bstrParam, BSTR bstrData)
-{
-	LoadCLR();
-
-	//if (m_pCLRProxy)
-	//	m_pCLRProxy->ActiveCLRMethod(bstrObjID, bstrMethod, bstrParam, bstrData);
-
-	return S_OK;
 }
 
 STDMETHODIMP CCosmos::CreateGalaxyCluster(LONGLONG hWnd, IGalaxyCluster** ppGalaxyCluster)

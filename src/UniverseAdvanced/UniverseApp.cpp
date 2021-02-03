@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022           *
+ *           Web Runtime for Application - Version 1.0.0.202102030023           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  *
@@ -76,8 +76,6 @@
 
 #include "OfficePlus\WordPlus\WordAddin.h"
 #include "OfficePlus\ExcelPlus\ExcelAddin.h"
-#include "OfficePlus\VisioPlus\VisioAddin.h"
-#include "OfficePlus\AccessPlus\AccessAddin.h"
 #include "OfficePlus\OutLookPlus\OutLookAddin.h"
 #include "OfficePlus\ProjectPlus\ProjectAddin.h"
 #include "OfficePlus\PowerPointPlus\PowerPointAddin.h"
@@ -420,19 +418,14 @@ BOOL CUniverse::InitInstance()
 				new CComObject < OutLookPlus::COutLookAddin >;
 				break;
 			case 4:
-				new CComObject < AccessPlus::CAccessAddin >;
 				break;
 			case 6:
 				new CComObject < ProjectPlus::CProjectAddin >;
 				break;
-				//case 5:
-				//	m_pCosmos = new CComObject < InfoPathPlus::CInfoPathCloudAddin >;
-				//	break;
 			case 7:
 				new CComObject < OfficePlus::COfficeAddin >;
 				break;
 			case 8:
-				new CComObject < VisioPlus::CVisioAddin >;
 				break;
 			}
 			g_pCosmos->m_nAppID = nAppID;

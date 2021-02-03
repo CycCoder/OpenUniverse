@@ -1,5 +1,5 @@
 /********************************************************************************
- *           Web Runtime for Application - Version 1.0.0.202102020022           *
+ *           Web Runtime for Application - Version 1.0.0.202102030023           *
  ********************************************************************************
  * Copyright (C) 2002-2021 by Tangram Team.   All Rights Reserved.
  *
@@ -391,16 +391,12 @@ interface ICosmos : IDispatch {
 	[propput, id(3)] HRESULT RemoteHelperHWND([in]LONGLONG newVal);
 	[propget, id(4), helpstring("property RootNodes")] HRESULT RootNodes([out, retval]IXobjCollection** ppXobjColletion);
 	[propget, id(5)] HRESULT HostWnd([out, retval] LONGLONG* pVal);
-	[propget, id(6), helpstring("property CurrentActiveNode")] HRESULT CurrentActiveXobj([out, retval] IXobj** pVal);
+	[propget, id(6), hidden] HRESULT DesignNode([out, retval] IXobj** pVal);
 	[propget, id(7), helpstring("property CreatingNode")] HRESULT CreatingXobj([out, retval] IXobj** pVal);
 	[propget, id(8)] HRESULT RemoteCosmos(BSTR bstrID, [out, retval] ICosmos** pVal);
 	[propget, id(9)] HRESULT Extender([out, retval] ICosmosExtender** pVal);
 	[propput, id(9)] HRESULT Extender([in] ICosmosExtender* newVal);
-	[propget, id(10), hidden] HRESULT DesignNode([out, retval] IXobj** pVal);
-	[propget, id(11)] HRESULT DocTemplate(BSTR bstrID, [out, retval] LONGLONG* pVal);
-	[propget, id(12)] HRESULT ActiveChromeBrowserWnd([out, retval] IBrowser** ppChromeWebBrowser);
 
-	[id(0x00100)] HRESULT NavigateNode(IXobj* pXobj, BSTR bstrBrowserID, BSTR bstrXml, [out, retval] IXobj** pVal);
 	[id(0x00101)] HRESULT CreateGalaxyCluster(LONGLONG hWnd, [out, retval]IGalaxyCluster** ppGalaxyCluster);
 	[id(0x00102)] HRESULT CreateOfficeDocument(BSTR bstrXml);
 	[id(0x00103), helpstring("method Create CLR Object")] HRESULT CreateCLRObj(BSTR bstrObjID, [out, retval]IDispatch** ppDisp);
@@ -408,12 +404,12 @@ interface ICosmos : IDispatch {
 	[id(0x00105), helpstring("method GetGalaxy")] HRESULT GetGalaxy(LONGLONG hHostWnd, [out, retval] IGalaxy** ppGalaxy);
 	[id(0x00106)] HRESULT GetItemText(IXobj* pXobj, long nCtrlID, LONG nMaxLengeh, [out, retval] BSTR* bstrRet);
 	[id(0x00107)] HRESULT SetItemText(IXobj* pXobj, long nCtrlID, BSTR bstrText);
-	[id(0x00108)] HRESULT GetCLRControl(IDispatch* CtrlDisp, BSTR bstrName, [out, retval] IDispatch** ppRetDisp);
-	[id(0x00109), helpstring("method MessageBox")] HRESULT MessageBox(LONGLONG hWnd, BSTR bstrContext, BSTR bstrCaption, long nStyle, [out, retval] int* nRet);
+	[id(0x00108), helpstring("method CreateOutLookObj")] HRESULT CreateOutLookObj(BSTR bstrObjType, int nType, BSTR bstrURL, [out, retval] IDispatch** ppRetDisp);
+	[id(0x00109)] HRESULT InitCLRApp(BSTR strInitXml, [out, retval] LONGLONG* llHandle);
 	[id(0x0010a), helpstring("method Encode")] HRESULT Encode(BSTR bstrSRC, VARIANT_BOOL bEncode, [out, retval] BSTR* bstrRet);
 	[id(0x0010b), helpstring("method SetHostFocus")] HRESULT SetHostFocus(void);
 	[id(0x0010c)] HRESULT UpdateXobj(IXobj* pXobj);
-	[id(0x0010d), helpstring("method NewGUID")] HRESULT NewGUID([out, retval] BSTR* retVal);
+	[id(0x0010d)] HRESULT DeletePage(LONGLONG PageHandle);
 	[id(0x0010e)] HRESULT InitEclipseApp();
 	[id(0x0010f)] HRESULT SelectVSObj(BSTR bstrData, IDispatch* pVSObj, LONGLONG nHandle);
 	[id(0x00110)] HRESULT DownLoadFile(BSTR strFileURL, BSTR bstrTargetFile, BSTR bstrActionXml);
@@ -430,10 +426,6 @@ interface ICosmos : IDispatch {
 	[id(0x0011b)] HRESULT CreateCosmosEventObj([out, retval]ICosmosEventObj** ppCosmosEventObj);
 	[id(0x0011c)] HRESULT FireCosmosEventObj(ICosmosEventObj* pCosmosEventObj);
 	[id(0x0011d)] HRESULT ObserveGalaxys(LONGLONG hWnd, BSTR bstrGalaxys, BSTR bstrKey, BSTR bstrXml, VARIANT_BOOL bSaveToConfigFile);
-	[id(0x0011e)] HRESULT DeletePage(LONGLONG PageHandle);
-	[id(0x0011f)] HRESULT LoadDocComponent(BSTR bstrLib, [out, retval] LONGLONG* llAppProxy);
-	[id(0x00120)] HRESULT InitCLRApp(BSTR strInitXml, [out, retval] LONGLONG* llHandle);
-	[id(0x00121), helpstring("method CreateOutLookObj")] HRESULT CreateOutLookObj(BSTR bstrObjType, int nType, BSTR bstrURL, [out, retval] IDispatch** ppRetDisp);
 
 	[id(0x001000), helpstring("method CosmosCommand")] HRESULT CosmosCommand(IDispatch* RibbonControl);
 	[id(0x001001), helpstring("method CosmosGetImage")] HRESULT CosmosGetImage(BSTR strValue, [out, retval] IPictureDisp** ppdispImage);
