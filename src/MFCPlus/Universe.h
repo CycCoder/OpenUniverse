@@ -2635,7 +2635,7 @@ EXTERN_C const IID IID_ICosmos;
         virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_HostWnd( 
             /* [retval][out] */ LONGLONG *pVal) = 0;
         
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_CurrentActiveXobj( 
+        virtual /* [hidden][id][propget] */ HRESULT STDMETHODCALLTYPE get_DesignNode( 
             /* [retval][out] */ IXobj **pVal) = 0;
         
         virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_CreatingXobj( 
@@ -2650,22 +2650,6 @@ EXTERN_C const IID IID_ICosmos;
         
         virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_Extender( 
             /* [in] */ ICosmosExtender *newVal) = 0;
-        
-        virtual /* [hidden][id][propget] */ HRESULT STDMETHODCALLTYPE get_DesignNode( 
-            /* [retval][out] */ IXobj **pVal) = 0;
-        
-        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_DocTemplate( 
-            BSTR bstrID,
-            /* [retval][out] */ LONGLONG *pVal) = 0;
-        
-        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_ActiveChromeBrowserWnd( 
-            /* [retval][out] */ IBrowser **ppChromeWebBrowser) = 0;
-        
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE NavigateNode( 
-            IXobj *pXobj,
-            BSTR bstrBrowserID,
-            BSTR bstrXml,
-            /* [retval][out] */ IXobj **pVal) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE CreateGalaxyCluster( 
             LONGLONG hWnd,
@@ -2697,17 +2681,15 @@ EXTERN_C const IID IID_ICosmos;
             long nCtrlID,
             BSTR bstrText) = 0;
         
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetCLRControl( 
-            IDispatch *CtrlDisp,
-            BSTR bstrName,
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE CreateOutLookObj( 
+            BSTR bstrObjType,
+            int nType,
+            BSTR bstrURL,
             /* [retval][out] */ IDispatch **ppRetDisp) = 0;
         
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE MessageBox( 
-            LONGLONG hWnd,
-            BSTR bstrContext,
-            BSTR bstrCaption,
-            long nStyle,
-            /* [retval][out] */ int *nRet) = 0;
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE InitCLRApp( 
+            BSTR strInitXml,
+            /* [retval][out] */ LONGLONG *llHandle) = 0;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Encode( 
             BSTR bstrSRC,
@@ -2719,8 +2701,8 @@ EXTERN_C const IID IID_ICosmos;
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE UpdateXobj( 
             IXobj *pXobj) = 0;
         
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE NewGUID( 
-            /* [retval][out] */ BSTR *retVal) = 0;
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE DeletePage( 
+            LONGLONG PageHandle) = 0;
         
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE InitEclipseApp( void) = 0;
         
@@ -2797,23 +2779,6 @@ EXTERN_C const IID IID_ICosmos;
             BSTR bstrKey,
             BSTR bstrXml,
             VARIANT_BOOL bSaveToConfigFile) = 0;
-        
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE DeletePage( 
-            LONGLONG PageHandle) = 0;
-        
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE LoadDocComponent( 
-            BSTR bstrLib,
-            /* [retval][out] */ LONGLONG *llAppProxy) = 0;
-        
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE InitCLRApp( 
-            BSTR strInitXml,
-            /* [retval][out] */ LONGLONG *llHandle) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE CreateOutLookObj( 
-            BSTR bstrObjType,
-            int nType,
-            BSTR bstrURL,
-            /* [retval][out] */ IDispatch **ppRetDisp) = 0;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE CosmosCommand( 
             IDispatch *RibbonControl) = 0;
@@ -2931,7 +2896,7 @@ EXTERN_C const IID IID_ICosmos;
             ICosmos * This,
             /* [retval][out] */ LONGLONG *pVal);
         
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_CurrentActiveXobj )( 
+        /* [hidden][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_DesignNode )( 
             ICosmos * This,
             /* [retval][out] */ IXobj **pVal);
         
@@ -2951,26 +2916,6 @@ EXTERN_C const IID IID_ICosmos;
         /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Extender )( 
             ICosmos * This,
             /* [in] */ ICosmosExtender *newVal);
-        
-        /* [hidden][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_DesignNode )( 
-            ICosmos * This,
-            /* [retval][out] */ IXobj **pVal);
-        
-        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_DocTemplate )( 
-            ICosmos * This,
-            BSTR bstrID,
-            /* [retval][out] */ LONGLONG *pVal);
-        
-        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_ActiveChromeBrowserWnd )( 
-            ICosmos * This,
-            /* [retval][out] */ IBrowser **ppChromeWebBrowser);
-        
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *NavigateNode )( 
-            ICosmos * This,
-            IXobj *pXobj,
-            BSTR bstrBrowserID,
-            BSTR bstrXml,
-            /* [retval][out] */ IXobj **pVal);
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *CreateGalaxyCluster )( 
             ICosmos * This,
@@ -3009,19 +2954,17 @@ EXTERN_C const IID IID_ICosmos;
             long nCtrlID,
             BSTR bstrText);
         
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *GetCLRControl )( 
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *CreateOutLookObj )( 
             ICosmos * This,
-            IDispatch *CtrlDisp,
-            BSTR bstrName,
+            BSTR bstrObjType,
+            int nType,
+            BSTR bstrURL,
             /* [retval][out] */ IDispatch **ppRetDisp);
         
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *MessageBox )( 
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *InitCLRApp )( 
             ICosmos * This,
-            LONGLONG hWnd,
-            BSTR bstrContext,
-            BSTR bstrCaption,
-            long nStyle,
-            /* [retval][out] */ int *nRet);
+            BSTR strInitXml,
+            /* [retval][out] */ LONGLONG *llHandle);
         
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Encode )( 
             ICosmos * This,
@@ -3036,9 +2979,9 @@ EXTERN_C const IID IID_ICosmos;
             ICosmos * This,
             IXobj *pXobj);
         
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *NewGUID )( 
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *DeletePage )( 
             ICosmos * This,
-            /* [retval][out] */ BSTR *retVal);
+            LONGLONG PageHandle);
         
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *InitEclipseApp )( 
             ICosmos * This);
@@ -3132,27 +3075,6 @@ EXTERN_C const IID IID_ICosmos;
             BSTR bstrXml,
             VARIANT_BOOL bSaveToConfigFile);
         
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *DeletePage )( 
-            ICosmos * This,
-            LONGLONG PageHandle);
-        
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *LoadDocComponent )( 
-            ICosmos * This,
-            BSTR bstrLib,
-            /* [retval][out] */ LONGLONG *llAppProxy);
-        
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *InitCLRApp )( 
-            ICosmos * This,
-            BSTR strInitXml,
-            /* [retval][out] */ LONGLONG *llHandle);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *CreateOutLookObj )( 
-            ICosmos * This,
-            BSTR bstrObjType,
-            int nType,
-            BSTR bstrURL,
-            /* [retval][out] */ IDispatch **ppRetDisp);
-        
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *CosmosCommand )( 
             ICosmos * This,
             IDispatch *RibbonControl);
@@ -3245,8 +3167,8 @@ EXTERN_C const IID IID_ICosmos;
 #define ICosmos_get_HostWnd(This,pVal)	\
     ( (This)->lpVtbl -> get_HostWnd(This,pVal) ) 
 
-#define ICosmos_get_CurrentActiveXobj(This,pVal)	\
-    ( (This)->lpVtbl -> get_CurrentActiveXobj(This,pVal) ) 
+#define ICosmos_get_DesignNode(This,pVal)	\
+    ( (This)->lpVtbl -> get_DesignNode(This,pVal) ) 
 
 #define ICosmos_get_CreatingXobj(This,pVal)	\
     ( (This)->lpVtbl -> get_CreatingXobj(This,pVal) ) 
@@ -3259,18 +3181,6 @@ EXTERN_C const IID IID_ICosmos;
 
 #define ICosmos_put_Extender(This,newVal)	\
     ( (This)->lpVtbl -> put_Extender(This,newVal) ) 
-
-#define ICosmos_get_DesignNode(This,pVal)	\
-    ( (This)->lpVtbl -> get_DesignNode(This,pVal) ) 
-
-#define ICosmos_get_DocTemplate(This,bstrID,pVal)	\
-    ( (This)->lpVtbl -> get_DocTemplate(This,bstrID,pVal) ) 
-
-#define ICosmos_get_ActiveChromeBrowserWnd(This,ppChromeWebBrowser)	\
-    ( (This)->lpVtbl -> get_ActiveChromeBrowserWnd(This,ppChromeWebBrowser) ) 
-
-#define ICosmos_NavigateNode(This,pXobj,bstrBrowserID,bstrXml,pVal)	\
-    ( (This)->lpVtbl -> NavigateNode(This,pXobj,bstrBrowserID,bstrXml,pVal) ) 
 
 #define ICosmos_CreateGalaxyCluster(This,hWnd,ppGalaxyCluster)	\
     ( (This)->lpVtbl -> CreateGalaxyCluster(This,hWnd,ppGalaxyCluster) ) 
@@ -3293,11 +3203,11 @@ EXTERN_C const IID IID_ICosmos;
 #define ICosmos_SetItemText(This,pXobj,nCtrlID,bstrText)	\
     ( (This)->lpVtbl -> SetItemText(This,pXobj,nCtrlID,bstrText) ) 
 
-#define ICosmos_GetCLRControl(This,CtrlDisp,bstrName,ppRetDisp)	\
-    ( (This)->lpVtbl -> GetCLRControl(This,CtrlDisp,bstrName,ppRetDisp) ) 
+#define ICosmos_CreateOutLookObj(This,bstrObjType,nType,bstrURL,ppRetDisp)	\
+    ( (This)->lpVtbl -> CreateOutLookObj(This,bstrObjType,nType,bstrURL,ppRetDisp) ) 
 
-#define ICosmos_MessageBox(This,hWnd,bstrContext,bstrCaption,nStyle,nRet)	\
-    ( (This)->lpVtbl -> MessageBox(This,hWnd,bstrContext,bstrCaption,nStyle,nRet) ) 
+#define ICosmos_InitCLRApp(This,strInitXml,llHandle)	\
+    ( (This)->lpVtbl -> InitCLRApp(This,strInitXml,llHandle) ) 
 
 #define ICosmos_Encode(This,bstrSRC,bEncode,bstrRet)	\
     ( (This)->lpVtbl -> Encode(This,bstrSRC,bEncode,bstrRet) ) 
@@ -3308,8 +3218,8 @@ EXTERN_C const IID IID_ICosmos;
 #define ICosmos_UpdateXobj(This,pXobj)	\
     ( (This)->lpVtbl -> UpdateXobj(This,pXobj) ) 
 
-#define ICosmos_NewGUID(This,retVal)	\
-    ( (This)->lpVtbl -> NewGUID(This,retVal) ) 
+#define ICosmos_DeletePage(This,PageHandle)	\
+    ( (This)->lpVtbl -> DeletePage(This,PageHandle) ) 
 
 #define ICosmos_InitEclipseApp(This)	\
     ( (This)->lpVtbl -> InitEclipseApp(This) ) 
@@ -3358,18 +3268,6 @@ EXTERN_C const IID IID_ICosmos;
 
 #define ICosmos_ObserveGalaxys(This,hWnd,bstrGalaxys,bstrKey,bstrXml,bSaveToConfigFile)	\
     ( (This)->lpVtbl -> ObserveGalaxys(This,hWnd,bstrGalaxys,bstrKey,bstrXml,bSaveToConfigFile) ) 
-
-#define ICosmos_DeletePage(This,PageHandle)	\
-    ( (This)->lpVtbl -> DeletePage(This,PageHandle) ) 
-
-#define ICosmos_LoadDocComponent(This,bstrLib,llAppProxy)	\
-    ( (This)->lpVtbl -> LoadDocComponent(This,bstrLib,llAppProxy) ) 
-
-#define ICosmos_InitCLRApp(This,strInitXml,llHandle)	\
-    ( (This)->lpVtbl -> InitCLRApp(This,strInitXml,llHandle) ) 
-
-#define ICosmos_CreateOutLookObj(This,bstrObjType,nType,bstrURL,ppRetDisp)	\
-    ( (This)->lpVtbl -> CreateOutLookObj(This,bstrObjType,nType,bstrURL,ppRetDisp) ) 
 
 #define ICosmos_CosmosCommand(This,RibbonControl)	\
     ( (This)->lpVtbl -> CosmosCommand(This,RibbonControl) ) 

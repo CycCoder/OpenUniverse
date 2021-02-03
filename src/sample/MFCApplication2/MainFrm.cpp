@@ -24,7 +24,7 @@
 
 // CMainFrame
 
-IMPLEMENT_DYNAMIC(CMainFrame, CTangramMDIFrameWndEx)
+IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWndEx)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CTangramMDIFrameWndEx)
 	ON_WM_CREATE()
