@@ -1560,12 +1560,6 @@ CGalaxy::~CGalaxy()
 	}
 	if (m_pRootNodes)
 		CCommonFunction::ClearObject<CXobjCollection>(m_pRootNodes);
-	if (m_mapVal.size()) {
-		for (auto it : m_mapVal) {
-			::VariantClear(&it.second);
-		}
-		m_mapVal.clear();
-	}
 	if (m_pGalaxyCluster) {
 		auto it = m_pGalaxyCluster->m_mapGalaxy.find(m_hHostWnd);
 		if (it != m_pGalaxyCluster->m_mapGalaxy.end()) {
@@ -2700,18 +2694,6 @@ LRESULT CGalaxy::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 		m_pBKWnd->DestroyWindow();
 	m_pGalaxyCluster->BeforeDestory();
 	m_pGalaxyCluster->m_strConfigFileNodeName.MakeLower();//20190116
-	//auto it = g_pCosmos->m_mapWindowPage.find(m_pGalaxyCluster->m_hWnd);
-	//if (it != g_pCosmos->m_mapWindowPage.end())
-	//{
-	//	auto it2 = m_pGalaxyCluster->m_mapNeedSaveGalaxy.find(m_hWnd);
-	//	if (it2 != m_pGalaxyCluster->m_mapNeedSaveGalaxy.end())
-	//	{
-	//		if (!m_pGalaxyCluster->m_bNewVersion)
-	//		{
-	//			m_pGalaxyCluster->put_ConfigName(m_pGalaxyCluster->m_strConfigFileNodeName.AllocSysString());
-	//		}
-	//	}
-	//}
 
 	DWORD dwID = ::GetWindowThreadProcessId(m_hWnd, NULL);
 	TRACE(_T("ObserveEx ThreadInfo:%x\n"), dwID);

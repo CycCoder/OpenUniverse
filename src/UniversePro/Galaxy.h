@@ -298,8 +298,6 @@ public:
 	GalaxyInfo*										m_pGalaxyInfo;
 	CWormhole*										m_pWormhole = nullptr;
 	map<CString, CXobj*>							m_mapXobj;
-	map<CString, CXobj*>							m_mapNeedSaveToConfigNode;
-	map<CString, VARIANT>							m_mapVal;
 	map<HWND, CWPFView*>							m_mapWPFView;
 	map<HWND, CWPFView*>							m_mapVisibleWPFView;
 	map<CString, CXobj*>							m_mapXobjScript;

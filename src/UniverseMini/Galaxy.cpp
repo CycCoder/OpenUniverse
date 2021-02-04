@@ -934,7 +934,7 @@ LRESULT CGalaxy::OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 
 	if (m_bMDIChild)
 		lpwndpos->flags |= SWP_NOZORDER;
-	::InvalidateRect(::GetParent(m_hWnd), nullptr, true);
+
 	if (::IsWindowVisible(m_hWnd))
 		::InvalidateRect(m_hWnd, nullptr, true);
 	return hr;

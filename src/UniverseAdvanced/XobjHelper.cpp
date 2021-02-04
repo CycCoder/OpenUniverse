@@ -936,7 +936,7 @@ void CXobjHelper::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 	}
 	if (m_hFormWnd)
 		::SetWindowPos(m_hFormWnd, HWND_TOP, 0, 0, lpwndpos->cx, lpwndpos->cy, SWP_NOACTIVATE | SWP_NOREDRAW);
-	else if (m_pXobj->m_strID.CompareNoCase(TGM_NUCLEUS) == 0 || m_pXobj->m_strID.CompareNoCase(_T("mdiclient")) == 0)//test 3
+	else if (m_pXobj->m_strID.CompareNoCase(TGM_NUCLEUS) == 0 || m_pXobj->m_strID.CompareNoCase(_T("mdiclient")) == 0)
 	{
 		if (g_pCosmos->m_pMDIMainWnd)
 		{

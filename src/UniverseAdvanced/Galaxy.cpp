@@ -1653,12 +1653,7 @@ CGalaxy::~CGalaxy()
 	}
 	if (m_pRootNodes)
 		CCommonFunction::ClearObject<CXobjCollection>(m_pRootNodes);
-	if (m_mapVal.size()) {
-		for (auto it : m_mapVal) {
-			::VariantClear(&it.second);
-		}
-		m_mapVal.clear();
-	}
+
 	if (m_pGalaxyCluster) {
 		auto it = m_pGalaxyCluster->m_mapGalaxy.find(m_hHostWnd);
 		if (it != m_pGalaxyCluster->m_mapGalaxy.end()) {
@@ -1715,7 +1710,6 @@ void CGalaxy::HostPosChanged()
 
 		HDWP dwh = BeginDeferWindowPos(1);
 		UINT flag = SWP_FRAMECHANGED | SWP_NOACTIVATE | SWP_SHOWWINDOW;
-		CWnd* _pWnd = CWnd::FromHandlePermanent(::GetParent(m_hWnd));
 
 		m_bObserve = !m_bDockPane;
 		if (m_bObserve)
@@ -2274,7 +2268,7 @@ STDMETHODIMP CGalaxy::Observe(BSTR bstrKey, BSTR bstrXml, IXobj** ppRetXobj)
 
 	if (g_pCosmos->m_pMDIMainWnd && (::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_hWnd) || ::IsChild(g_pCosmos->m_hHostBrowserWnd, m_hWnd)))
 	{
-		auto itClient = m_pWorkXobj->m_mapChildXobj.find(_T("mdiclient"));//test 1
+		auto itClient = m_pWorkXobj->m_mapChildXobj.find(_T("mdiclient"));
 		if (itClient != m_pWorkXobj->m_mapChildXobj.end())
 		{
 			bool bReplace = true;
