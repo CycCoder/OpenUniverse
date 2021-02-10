@@ -97,9 +97,9 @@ namespace Browser {
 			}
 			if (!m_pClientGalaxy)
 				m_pBrowser->LayoutBrowser();
-			if (g_pCosmos->m_pMDIMainWnd && m_pCosmosFrameWndInfo && m_pCosmosFrameWndInfo->m_hClient == g_pCosmos->m_pMDIMainWnd->m_hMDIClient)
+			else if (m_pClientGalaxy->m_bTabbedMDIClient)
 			{
-				::SendMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+				g_pCosmos->m_pCosmosDelegate->QueryWndInfo(QueryType::RecalcLayout, m_pClientGalaxy->m_hWnd);
 			}
 		}
 		return lRes;

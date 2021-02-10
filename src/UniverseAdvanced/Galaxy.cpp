@@ -3123,17 +3123,20 @@ LRESULT CGalaxy::OnNcDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 
 LRESULT CGalaxy::OnQueryAppProxy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 {
-	if (g_pCosmos->m_pMDIMainWnd && lParam == 19651965)
+	if (lParam == 19651965)
 	{
 		m_bTabbedMDIClient = true;
 		LPRECT lpRECT = (LPRECT)wParam;
+		m_OldRect = *lpRECT;
 		if (lpRECT && m_pWorkXobj && ::IsWindowVisible(m_pWorkXobj->m_pHostWnd->m_hWnd))
 		{
 			::SetWindowPos(m_pWorkXobj->m_pHostWnd->m_hWnd, HWND_BOTTOM, lpRECT->left, lpRECT->top, lpRECT->right - lpRECT->left, lpRECT->bottom - lpRECT->top, SWP_NOREDRAW | SWP_NOACTIVATE | SWP_NOZORDER);/*SWP_FRAMECHANGED| SWP_HIDEWINDOW | SWP_NOREDRAW */
 			if (m_pBindingXobj && ::IsWindowVisible(m_pBindingXobj->m_pHostWnd->m_hWnd))
 			{
 				m_pBindingXobj->m_pHostWnd->GetWindowRect(lpRECT);
-				g_pCosmos->m_pMDIMainWnd->ScreenToClient(lpRECT);
+
+				::ScreenToClient(::GetParent(m_hWnd), (LPPOINT)lpRECT);
+				::ScreenToClient(::GetParent(m_hWnd), ((LPPOINT)lpRECT) + 1);
 			}
 		}
 		return m_pWorkXobj ? ((LRESULT)m_pWorkXobj->m_pHostWnd->m_hWnd) : 0;
@@ -3154,14 +3157,14 @@ LRESULT CGalaxy::OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	{
 		if (m_pBindingXobj)
 		{
-			RECT rect = { 0,0,0,0 };
+			RECT rect = m_OldRect;
 			HWND hPWnd = ::GetParent(m_hWnd);
-			if (::SendMessage(hPWnd, WM_QUERYAPPPROXY, (WPARAM)&rect, 19921989) == 19921989)
+			if (m_bTabbedMDIClient)
 			{
-				lpwndpos->x = rect.left;
-				lpwndpos->y = rect.top;
-				lpwndpos->cx = rect.right - rect.left;
-				lpwndpos->cy = rect.bottom - rect.top;
+				lpwndpos->x = m_OldRect.left;
+				lpwndpos->y = m_OldRect.top;
+				lpwndpos->cx = m_OldRect.right - m_OldRect.left;
+				lpwndpos->cy = m_OldRect.bottom - m_OldRect.top;
 			}
 			::SetWindowPos(m_pWorkXobj->m_pHostWnd->m_hWnd, HWND_BOTTOM, lpwndpos->x, lpwndpos->y, lpwndpos->cx, lpwndpos->cy, lpwndpos->flags | SWP_NOACTIVATE | SWP_FRAMECHANGED);// |SWP_NOREDRAW); 
 			CXobj* _pHostNode = m_pBindingXobj;

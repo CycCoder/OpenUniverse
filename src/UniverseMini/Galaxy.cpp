@@ -856,13 +856,6 @@ LRESULT CGalaxy::OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	{
 		RECT rect = { 0,0,0,0 };
 		HWND hPWnd = ::GetParent(m_hWnd);
-		if (::SendMessage(hPWnd, WM_QUERYAPPPROXY, (WPARAM)&rect, 19921989) == 19921989)
-		{
-			lpwndpos->x = rect.left;
-			lpwndpos->y = rect.top;
-			lpwndpos->cx = rect.right - rect.left;
-			lpwndpos->cy = rect.bottom - rect.top;
-		}
 		::SetWindowPos(m_pWorkXobj->m_pHostWnd->m_hWnd, HWND_BOTTOM, lpwndpos->x, lpwndpos->y, lpwndpos->cx, lpwndpos->cy, lpwndpos->flags | SWP_NOACTIVATE | SWP_FRAMECHANGED); //| SWP_NOREDRAW);// ); 
 		CXobj* _pHostNode = m_pBindingXobj;
 		if (_pHostNode->m_pHostGalaxy)

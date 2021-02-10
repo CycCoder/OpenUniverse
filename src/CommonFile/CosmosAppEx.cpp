@@ -1346,23 +1346,6 @@ namespace CommonUniverse
 			{
 			case 19651965:
 				RecalcLayout();
-				//::InvalidateRect(m_hWnd, nullptr, true);
-				break;
-			case 19631992:
-				AfxGetApp()->m_pMainWnd = this;
-				break;
-			case TANGRAM_CONST_NEWDOC://for new doc
-			{
-				((CCosmosAppEx*)AfxGetApp())->OnFileNew();
-			};
-			break;
-			case 19921989:
-				if (wp)
-				{
-					LPRECT lpRC = (LPRECT)wp;
-					*lpRC = m_dockManager.GetClientAreaBounds();
-					return lp;
-				}
 				break;
 			}
 		}

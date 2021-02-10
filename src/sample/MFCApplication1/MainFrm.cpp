@@ -20,7 +20,7 @@ const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
-BEGIN_MESSAGE_MAP(CMainFrame, CTangramMDIFrameWndEx)
+BEGIN_MESSAGE_MAP(CMainFrame, CTangramMDIFrameWndEx/* CMDIFrameWndEx*/)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_WINDOW_MANAGER, &CMainFrame::OnWindowManager)
 	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
@@ -427,4 +427,13 @@ void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 {
 	CMDIFrameWndEx::OnSettingChange(uFlags, lpszSection);
 	m_wndOutput.UpdateFonts();
+}
+
+
+void CMainFrame::AdjustClientArea()
+{
+	CMDIFrameWndEx::AdjustClientArea();
+	CRect rc = m_dockManager.GetClientAreaBounds();
+	::SendMessage(m_hWndMDIClient, WM_QUERYAPPPROXY, (WPARAM)(LPRECT)rc, 19651965);
+	m_wndClientArea.CalcWindowRectForMDITabbedGroups(rc, 0);
 }
