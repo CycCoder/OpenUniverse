@@ -3811,6 +3811,11 @@ void CCosmos::CosmosNotify(CString strXml1, CString strXml2, LONGLONG wParam, LO
 {
 }
 
+void CCosmos::AdjustClientArea(HWND hGalaxy, RECT& rc) 
+{
+	::SendMessage(hGalaxy, WM_QUERYAPPPROXY, (WPARAM)(LPRECT)&rc, 19651965);
+}
+
 HRESULT CCosmos::CreateBrowser(ULONGLONG hParentWnd, BSTR bstrUrls, IBrowser** ppRet)
 {
 	HWND hPWnd = (HWND)hParentWnd;

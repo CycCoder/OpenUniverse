@@ -1123,7 +1123,12 @@ BOOL CXobj::Create(DWORD dwStyle, const RECT & rect, CWnd * pParentWnd, UINT nID
 				::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, hWnd)
 				&& !::IsChild(g_pCosmos->m_pMDIMainWnd->m_hMDIClient, hWnd))
 			{
-				g_pCosmos->m_pMDIMainWnd->m_vMdiClientXobjs.push_back(this);
+				auto it = g_pCosmos->m_mapCosmosFrameWndInfo.find(g_pCosmos->m_pMDIMainWnd->m_hWnd);
+				if (it != g_pCosmos->m_mapCosmosFrameWndInfo.end())
+				{
+					int nSize = it->second->m_mapMdiClientXobj.size();
+					it->second->m_mapMdiClientXobj[nSize] = this;
+				}
 			}
 		}
 	}

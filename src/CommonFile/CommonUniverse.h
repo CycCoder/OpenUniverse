@@ -270,6 +270,8 @@ namespace CommonUniverse {
 		void* m_pDocTemplate = nullptr;
 		map<CString,HWND> m_mapAuxiliaryWnd;
 		map<CString, IGalaxy*> m_mapAuxiliaryGalaxys;
+		map<HWND, void*> m_mapMDIChildHelperWnd;
+		map<int, IXobj*>	m_mapMdiClientXobj;
 	} CosmosFrameWndInfo;
 
 	typedef struct CtrlInfo
@@ -689,6 +691,7 @@ namespace CommonUniverse {
 		virtual CSession* CreateCloudSession(CWebPageImpl*) { return nullptr; }
 		virtual CSession* GetCloudSession(IXobj*) { return nullptr; }
 		virtual void SetMainWnd(HWND hMain) {}
+		virtual void AdjustClientArea(HWND hGalaxy, RECT& rc) {}
 		virtual void CosmosNotify(CString strPara1, CString strPara2, WPARAM, LPARAM) {}
 	};
 

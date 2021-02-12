@@ -419,5 +419,6 @@ private:
 	CSession* GetCloudSession(IXobj*);
 	void SetMainWnd(HWND hMain);
 	DWORD ExecCmd(const CString cmd, const BOOL setCurrentDirectory);
+	void AdjustClientArea(HWND hGalaxy, RECT& rc);
 	void CosmosNotify(CString strXml1, CString strXml2, LONGLONG wParam, LONGLONG lParam);
 };

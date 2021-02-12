@@ -1762,6 +1762,12 @@ LRESULT CALLBACK CUniverse::GetMessageProc(int nCode, WPARAM wParam, LPARAM lPar
 				return CallNextHookEx(pThreadInfo->m_hGetMessageHook, nCode, wParam, lParam);
 			}
 			break;
+			case WM_QUERYAPPPROXY:
+			{
+				if (lpMsg->lParam == 19651965)
+					g_pCosmos->m_pCosmosDelegate->QueryWndInfo(QueryType::RecalcLayout, (HWND)lpMsg->wParam);
+			}
+			break;
 			case WM_MDICHILDMIN:
 				::BringWindowToTop(lpMsg->hwnd);
 				break;

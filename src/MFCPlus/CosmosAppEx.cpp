@@ -169,7 +169,7 @@ namespace CommonUniverse
 	// CTangramTabCtrlWnd
 	IMPLEMENT_DYNAMIC(CTangramTabCtrlWnd, CMFCTabCtrl)
 
-	CTangramTabCtrlWnd::CTangramTabCtrlWnd()
+		CTangramTabCtrlWnd::CTangramTabCtrlWnd()
 	{
 		m_nCurSelTab = -1;
 		m_pWndNode = nullptr;
@@ -216,12 +216,11 @@ namespace CommonUniverse
 				{
 					__int64 nHandle = 0;
 					pGalaxy->get_HWND(&nHandle);
-					HWND hWnd = (HWND)nHandle;
-					m_hPWnd = ::GetParent(hWnd);
+					m_hPWnd = (HWND)nHandle;
 				}
 			}
-			if(m_hPWnd)
-				::PostMessage(m_hPWnd, WM_QUERYAPPPROXY, 0, 19651965);
+			if (m_hPWnd)
+				::PostAppMessage(::GetCurrentThreadId(), WM_QUERYAPPPROXY, (WPARAM)m_hPWnd, 19651965);
 		}
 		BOOL bRet = CMFCTabCtrl::SetActiveTab(iTab);
 		return bRet;
@@ -436,9 +435,17 @@ namespace CommonUniverse
 	HWND CCosmosDelegate::QueryWndInfo(QueryType nType, HWND hWnd)
 	{
 		CWnd* pWnd = CWnd::FromHandlePermanent(hWnd);
-		if (pWnd&&pWnd->IsKindOf(RUNTIME_CLASS(CMDIClientAreaWnd)))
+		if (pWnd && pWnd->IsKindOf(RUNTIME_CLASS(CMDIClientAreaWnd)))
 		{
 			BOOL bMDIClient = true;
+			if (nType == RecalcLayout)
+			{
+				CFrameWnd* pFrame = pWnd->GetParentFrame();
+				if (pFrame)
+				{
+					pFrame->RecalcLayout();
+				}
+			}
 			return ::GetParent(hWnd);
 		}
 		switch (nType)
@@ -476,7 +483,7 @@ namespace CommonUniverse
 										{
 											if (pTemplate->IsKindOf(RUNTIME_CLASS(CMultiDocTemplate)))
 											{
-												if(!pFrame->IsKindOf(RUNTIME_CLASS(CMDIFrameWnd)))
+												if (!pFrame->IsKindOf(RUNTIME_CLASS(CMDIFrameWnd)))
 													pCosmosFrameWndInfo->m_nFrameType = 1;
 												return pWnd->m_hWnd;
 											}
@@ -524,9 +531,9 @@ namespace CommonUniverse
 		break;
 		case DocView:
 		{
-			if (pWnd&&pWnd->IsKindOf(RUNTIME_CLASS(CView)))
+			if (pWnd && pWnd->IsKindOf(RUNTIME_CLASS(CView)))
 			{
-				CView* pView = static_cast<CView*>(pWnd); 
+				CView* pView = static_cast<CView*>(pWnd);
 				CosmosFrameWndInfo* pCosmosFrameWndInfo = nullptr;
 				CFrameWnd* pFrame = pView->GetParentFrame();
 				if (pFrame)
@@ -556,7 +563,7 @@ namespace CommonUniverse
 						if (pCosmosFrameWndInfo)
 						{
 							pCosmosFrameWndInfo->m_hClient = hWnd;
-							if (pCosmosFrameWndInfo->m_pDoc == nullptr&& pDoc)
+							if (pCosmosFrameWndInfo->m_pDoc == nullptr && pDoc)
 							{
 								pCosmosFrameWndInfo->m_pDoc = pDoc;
 								pCosmosFrameWndInfo->m_pDocTemplate = pDoc->GetDocTemplate();
@@ -580,7 +587,7 @@ namespace CommonUniverse
 				}
 			}
 		}
-			break;
+		break;
 		case QueryDestroy:
 		{
 			if (::GetParent(hWnd) == NULL && AfxGetApp()->m_pMainWnd && AfxGetApp()->m_pMainWnd != pWnd)
@@ -592,20 +599,36 @@ namespace CommonUniverse
 		break;
 		case ObserveComplete:
 		{
-			for (auto &it : m_mapViewDoc)
+			for (auto& it : m_mapViewDoc)
 			{
 				it.second->AddView(it.first);
 			}
 			m_mapViewDoc.erase(m_mapViewDoc.begin(), m_mapViewDoc.end());
 		}
-			break;
+		break;
+		case RecalcLayout:
+		{
+			CWnd* pWnd = CWnd::FromHandle(hWnd);
+			CFrameWnd* pFrame = pWnd->GetParentFrame();
+			if (pFrame)
+			{
+				pFrame->RecalcLayout();
+				return pFrame->m_hWnd;
+			}
+		}
+		break;
 		default:
+			if (pWnd && pWnd->IsKindOf(RUNTIME_CLASS(CMDIClientAreaWnd)))
+			{
+				BOOL bMDIClient = true;
+				return ::GetParent(hWnd);
+			}
 			break;
 		}
 		return NULL;
 	}
 
-	void CCosmosDelegate::OnIPCMsg(CWebPageImpl* pWebPageImpl, CString strType, CString strParam1, CString strParam2, CString strParam3, CString strParam4, CString strParam5) 
+	void CCosmosDelegate::OnIPCMsg(CWebPageImpl* pWebPageImpl, CString strType, CString strParam1, CString strParam2, CString strParam3, CString strParam4, CString strParam5)
 	{
 		if (strType.CompareNoCase(_T("COSMOS_CREATE_DOC")) == 0)
 		{
@@ -618,7 +641,7 @@ namespace CommonUniverse
 				strExt.MakeLower();
 				if (strExt == _T(""))
 					strExt = _T("default");
-				if (strExt != _T("")&&strExt.CompareNoCase(strParam1)==0)
+				if (strExt != _T("") && strExt.CompareNoCase(strParam1) == 0)
 				{
 					m_strCreatingDOCID = strParam2;
 					pTemplate->OpenDocumentFile(nullptr);
@@ -702,7 +725,7 @@ namespace CommonUniverse
 			{
 				m_strContainer = _T(",") + m_strContainer + _T(",");
 				m_strContainer.Replace(_T(",,"), _T(","));
-			}
+	}
 			GetCosmosImpl _pCosmosImplFunction;
 			_pCosmosImplFunction = (GetCosmosImpl)GetProcAddress(hModule, "GetCosmosImpl");
 			g_pCosmosImpl = m_pCosmosImpl = _pCosmosImplFunction(&g_pCosmos);
@@ -737,7 +760,7 @@ namespace CommonUniverse
 					g_pCosmosImpl->InserttoDataMap(1, m_strProviderID, static_cast<ICosmosWindowProvider*>(this));
 				}
 			}
-			}
+}
 		return true;
 	}
 
@@ -817,9 +840,9 @@ namespace CommonUniverse
 	{
 		return false;
 	}
-	
-	HICON CCosmosDelegate::GetAppIcon(int nIndex) 
-	{ 
+
+	HICON CCosmosDelegate::GetAppIcon(int nIndex)
+	{
 		if (g_pAppBase->m_pMainWnd)
 		{
 			switch (nIndex)
@@ -878,9 +901,9 @@ namespace CommonUniverse
 			CWnd* pWnd = CWnd::FromHandlePermanent((HWND)h);
 			if (pWnd == NULL)
 				return NULL;
-			if (pWnd->IsKindOf(RUNTIME_CLASS(CTangramMDIFrameWndEx)))
+			if (pWnd->IsKindOf(RUNTIME_CLASS(CCosmosMDIFrame)))
 			{
-				pGalaxyClusterProxy = (CGalaxyClusterProxy*)(CTangramMDIFrameWndEx*)pWnd;
+				pGalaxyClusterProxy = (CGalaxyClusterProxy*)(CCosmosMDIFrame*)pWnd;
 			}
 			if (pGalaxyClusterProxy)
 				pGalaxyClusterProxy->m_bAutoDelete = false;
@@ -917,7 +940,7 @@ namespace CommonUniverse
 				strNameBase += _T(",");
 				return strNameBase;
 			}
-	}
+		}
 		return strNameBase;
 	}
 
@@ -1066,7 +1089,7 @@ namespace CommonUniverse
 						::SysFreeString(bstrTag);
 						int nActivePage = _wtoi(m_strTag);
 						if (nCount)
-							nActivePage = nActivePage%nCount;
+							nActivePage = nActivePage % nCount;
 						::PostMessage(pWnd->m_hWnd, WM_TABCHANGE, nActivePage, 0);
 						if (pWnd->IsKindOf(RUNTIME_CLASS(CView)))
 						{
@@ -1265,23 +1288,22 @@ namespace CommonUniverse
 		return true;
 	}
 
-	IMPLEMENT_DYNCREATE(CTangramMDIFrameWndEx, CMDIFrameWndEx)
+	IMPLEMENT_DYNCREATE(CCosmosMDIFrame, CMDIFrameWndEx)
 
-	BEGIN_MESSAGE_MAP(CTangramMDIFrameWndEx, CMDIFrameWndEx)
-		ON_MESSAGE(WM_QUERYAPPPROXY, OnQueryAppProxy)
+	BEGIN_MESSAGE_MAP(CCosmosMDIFrame, CMDIFrameWndEx)
 		ON_WM_NCACTIVATE()
 	END_MESSAGE_MAP()
 
 
-	CTangramMDIFrameWndEx::CTangramMDIFrameWndEx()
+	CCosmosMDIFrame::CCosmosMDIFrame()
 	{
 	}
 
-	CTangramMDIFrameWndEx::~CTangramMDIFrameWndEx()
+	CCosmosMDIFrame::~CCosmosMDIFrame()
 	{
 	}
 
-	BOOL CTangramMDIFrameWndEx::OnCommand(WPARAM wParam, LPARAM lParam)
+	BOOL CCosmosMDIFrame::OnCommand(WPARAM wParam, LPARAM lParam)
 	{
 		//if (m_hClient == nullptr)
 		//{
@@ -1306,45 +1328,21 @@ namespace CommonUniverse
 		return CMDIFrameWndEx::OnCommand(wParam, lParam);
 	}
 
-	void CTangramMDIFrameWndEx::AdjustClientArea()
+	void CCosmosMDIFrame::AdjustClientArea()
 	{
-		CRect rc = m_dockManager.GetClientAreaBounds();
-		::SendMessage(m_hWndMDIClient, WM_QUERYAPPPROXY, (WPARAM)(LPRECT)rc, 19651965);
-		m_wndClientArea.CalcWindowRectForMDITabbedGroups(rc, 0);
-	}
-
-	LRESULT CTangramMDIFrameWndEx::OnQueryAppProxy(WPARAM wp, LPARAM lp)
-	{
-		if (lp)
+		CMDIFrameWndEx::AdjustClientArea();
+		if (g_pCosmosImpl)
 		{
-			switch (lp)
-			{
-			case 19651965:
-				RecalcLayout();
-				//::InvalidateRect(m_hWnd, nullptr, true);
-				break;
-			case 19631992:
-				AfxGetApp()->m_pMainWnd = this;
-				break;
-			case TANGRAM_CONST_NEWDOC://for new doc
-			{
-				((CCosmosAppEx*)AfxGetApp())->OnFileNew();
-			};
-			break;
-			case 19921989:
-				if (wp)
-				{
-					LPRECT lpRC = (LPRECT)wp;
-					*lpRC = m_dockManager.GetClientAreaBounds();
-					return lp;
-				}
-				break;
-			}
+			CRect rc = m_dockManager.GetClientAreaBounds();
+			g_pCosmosImpl->AdjustClientArea(m_hWndMDIClient, rc);
+			m_wndClientArea.CalcWindowRectForMDITabbedGroups(rc, 0);
 		}
-		return 0;// (LRESULT)(IUniverseAppProxy*)&theApp;
+		//CRect rc = m_dockManager.GetClientAreaBounds();
+		//::SendMessage(m_hWndMDIClient, WM_QUERYAPPPROXY, (WPARAM)(LPRECT)rc, 19651965);
+		//m_wndClientArea.CalcWindowRectForMDITabbedGroups(rc, 0);
 	}
 
-	BOOL CTangramMDIFrameWndEx::OnNcActivate(BOOL bActive)
+	BOOL CCosmosMDIFrame::OnNcActivate(BOOL bActive)
 	{
 		CMFCRibbonBar* pBar = GetRibbonBar();
 		if (pBar && ::IsWindow(pBar->m_hWnd) == NULL)
@@ -1352,7 +1350,7 @@ namespace CommonUniverse
 		return CMDIFrameWndEx::OnNcActivate(bActive);
 	}
 
-	void CTangramMDIFrameWndEx::OnTabChange(IXobj* sender, LONG ActivePage, LONG OldPage)
+	void CCosmosMDIFrame::OnTabChange(IXobj* sender, LONG ActivePage, LONG OldPage)
 	{
 		__int64 h = 0;
 		sender->get_Handle(&h);
@@ -1364,7 +1362,7 @@ namespace CommonUniverse
 		pActiveNode->get_NameAtWindowPage(&bstrName2);
 	}
 
-	void CTangramMDIFrameWndEx::OnClrControlCreated(IXobj* Node, IDispatch* Ctrl, CString CtrlName, HWND CtrlHandle)
+	void CCosmosMDIFrame::OnClrControlCreated(IXobj* Node, IDispatch* Ctrl, CString CtrlName, HWND CtrlHandle)
 	{
 		CComBSTR bstrName("");
 		Node->get_Name(&bstrName);
@@ -1372,19 +1370,19 @@ namespace CommonUniverse
 		Node->get_NameAtWindowPage(&bstrName2);
 	}
 
-	void CTangramMDIFrameWndEx::OnEvent(IDispatch* sender, IDispatch* EventArg)
+	void CCosmosMDIFrame::OnEvent(IDispatch* sender, IDispatch* EventArg)
 	{
 	}
 
-	void CTangramMDIFrameWndEx::OnControlNotify(IXobj* sender, LONG NotifyCode, LONG CtrlID, HWND CtrlHandle, CString CtrlClassName)
+	void CCosmosMDIFrame::OnControlNotify(IXobj* sender, LONG NotifyCode, LONG CtrlID, HWND CtrlHandle, CString CtrlClassName)
 	{
 	}
 
-	void CTangramMDIFrameWndEx::OnHubbleEvent(ICosmosEventObj* NotifyObj)
+	void CCosmosMDIFrame::OnHubbleEvent(ICosmosEventObj* NotifyObj)
 	{
 	}
 
-	BOOL CTangramMDIFrameWndEx::OnShowPopupMenu(CMFCPopupMenu* pMenuPopup)
+	BOOL CCosmosMDIFrame::OnShowPopupMenu(CMFCPopupMenu* pMenuPopup)
 	{
 		if (pMenuPopup == nullptr || ::IsWindow(pMenuPopup->m_hWnd) == false)
 			return false;

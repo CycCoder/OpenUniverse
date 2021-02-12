@@ -68,7 +68,7 @@ namespace Browser {
 					m_pClientGalaxy->ModifyStyle(0, WS_CLIPCHILDREN);
 				}
 			}
-			else if (m_pCosmosFrameWndInfo && m_pCosmosFrameWndInfo->m_hClient == g_pCosmos->m_pMDIMainWnd->m_hMDIClient)
+			else if (m_pClientGalaxy && m_pClientGalaxy->m_bTabbedMDIClient)
 			{
 				auto it = g_pCosmos->m_mapHtmlWnd.find(hActive);
 				if (it != g_pCosmos->m_mapHtmlWnd.end())
@@ -134,10 +134,10 @@ namespace Browser {
 				if (m_pVisibleWebWnd->m_pChromeRenderFrameHost)
 				{
 					m_pVisibleWebWnd->m_pChromeRenderFrameHost->ShowWebPage(true);
-					if (m_pParentXobj && g_pCosmos->m_pMDIMainWnd)
-					{
-						g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
-					}
+				}
+				else if (m_pClientGalaxy->m_bTabbedMDIClient)
+				{
+					g_pCosmos->m_pCosmosDelegate->QueryWndInfo(QueryType::RecalcLayout, m_pClientGalaxy->m_hWnd);
 				}
 				::PostMessage(m_hWnd, WM_COSMOSMSG, 20200205, 1);
 				return;
@@ -159,9 +159,9 @@ namespace Browser {
 			if (::IsChild(hWnd, hExtendWnd))
 				::SetParent(hExtendWnd, m_hWnd);
 
-			if (m_pParentXobj && g_pCosmos->m_pMDIMainWnd && ::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, hWnd))
+			if (m_pClientGalaxy && m_pClientGalaxy->m_bTabbedMDIClient)
 			{
-				g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+				g_pCosmos->m_pCosmosDelegate->QueryWndInfo(QueryType::RecalcLayout, m_pClientGalaxy->m_hWnd);
 			}
 			::SetWindowPos(hExtendWnd, m_hDrawWnd,
 				rc.left,

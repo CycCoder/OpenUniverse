@@ -161,6 +161,12 @@ LRESULT CMenuHelperWnd::OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	return lRes;
 }
 
+LRESULT CMenuHelperWnd::OnCancelMode(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
+{
+	LRESULT lRes = DefWindowProc(uMsg, wParam, lParam);
+	return lRes;
+}
+
 CCosmosProxy::CCosmosProxy() : ICosmosCLRImpl()
 {
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);//TabPage|TabControl|

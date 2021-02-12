@@ -257,15 +257,15 @@ namespace CommonUniverse
 		virtual HWND GetActivePopupMenu(HWND hWnd) ;
 	};
 
-	class CTangramMDIFrameWndEx :
+	class CCosmosMDIFrame :
 		public CMDIFrameWndEx,
 		public CGalaxyClusterProxy
 	{
 	public:
-		CTangramMDIFrameWndEx();
-		virtual ~CTangramMDIFrameWndEx();
+		CCosmosMDIFrame();
+		virtual ~CCosmosMDIFrame();
 
-		DECLARE_DYNCREATE(CTangramMDIFrameWndEx)
+		DECLARE_DYNCREATE(CCosmosMDIFrame)
 
 		virtual BOOL OnShowPopupMenu(CMFCPopupMenu* /*pMenuPopup*/);
 		virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
@@ -275,7 +275,6 @@ namespace CommonUniverse
 
 	private:
 		afx_msg BOOL OnNcActivate(BOOL bActive);
-		afx_msg LRESULT OnQueryAppProxy(WPARAM wp, LPARAM lp);
 		
 		void AdjustClientArea();
 		void OnTabChange(IXobj* sender, LONG ActivePage, LONG OldPage);

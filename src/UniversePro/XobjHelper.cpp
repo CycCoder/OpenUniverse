@@ -108,7 +108,12 @@ BOOL CXobjHelper::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw
 		BOOL bRet = SubclassWindow(hWnd);
 		if (pGalaxy->m_bTabbedMDIClient)
 		{
-			g_pCosmos->m_pMDIMainWnd->m_vMdiClientXobjs.push_back(m_pXobj);
+			auto it = g_pCosmos->m_mapCosmosFrameWndInfo.find(::GetParent(pGalaxy->m_hWnd));
+			if (it != g_pCosmos->m_mapCosmosFrameWndInfo.end())
+			{
+				int nSize = it->second->m_mapMdiClientXobj.size();
+				it->second->m_mapMdiClientXobj[nSize] = m_pXobj;
+			}
 		}
 		if (m_pXobj->m_pParentObj)
 		{
@@ -1098,7 +1103,9 @@ void CXobjHelper::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 		{
 			pGalaxy->HostPosChanged();
 			if (pMainWnd->m_pActiveMDIChild)
-				::PostMessage(pMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+			{
+				::PostAppMessage(::GetCurrentThreadId(), WM_QUERYAPPPROXY, (WPARAM)pMainWnd->m_hMDIClient, 19651965);
+			}
 			return;
 		}
 	}

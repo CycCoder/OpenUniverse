@@ -784,12 +784,17 @@ LRESULT CMDIChildWindow::OnCosmosMg(UINT uMsg, WPARAM wParam, LPARAM lParam, BOO
 
 void CMDIChildWindow::OnFinalMessage(HWND hWnd)
 {
-	auto it = g_pCosmos->m_pMDIMainWnd->m_mapMDIChildHelperWnd.find(hWnd);
-	if (it != g_pCosmos->m_pMDIMainWnd->m_mapMDIChildHelperWnd.end())
-		g_pCosmos->m_pMDIMainWnd->m_mapMDIChildHelperWnd.erase(it);
-	if (g_pCosmos->m_pMDIMainWnd->m_mapMDIChildHelperWnd.size() == 0)
+	HWND hPWnd = ::GetParent(::GetParent(hWnd));
+	auto itInfo = g_pCosmos->m_mapCosmosFrameWndInfo.find(hPWnd);
+	if (itInfo != g_pCosmos->m_mapCosmosFrameWndInfo.end())
 	{
-		::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_COSMOSMSG, 0, 20210126);
+		auto it = itInfo->second->m_mapMDIChildHelperWnd.find(hWnd);
+		if (it != itInfo->second->m_mapMDIChildHelperWnd.end())
+			itInfo->second->m_mapMDIChildHelperWnd.erase(it);
+		if (itInfo->second->m_mapMDIChildHelperWnd.size() == 0)
+		{
+			::PostMessage(hPWnd, WM_COSMOSMSG, 0, 20210126);
+		}
 	}
 	CWindowImpl::OnFinalMessage(hWnd);
 	delete this;
@@ -928,14 +933,14 @@ LRESULT CMDIMainWindow::OnCosmosMsg(UINT uMsg, WPARAM wParam, LPARAM lParam, BOO
 				}
 				if (bNewKey)
 				{
-					int nCount = m_vMdiClientXobjs.size();
+					int nCount = pCosmosFrameWndInfo->m_mapMdiClientXobj.size();
 					for (int i = nCount - 1; i >= 0; i--)
 					{
-						CXobj* pObj = m_vMdiClientXobjs[i];
+						CXobj* pObj = (CXobj*)pCosmosFrameWndInfo->m_mapMdiClientXobj[i];
 						if (::IsWindowVisible(pObj->m_pHostWnd->m_hWnd))
 						{
 							m_pGalaxy->m_pBindingXobj = pObj;
-							::SendMessage(m_hWnd, WM_COSMOSMSG, 0, 19651965);
+							::PostMessage(m_hWnd, WM_COSMOSMSG, (WPARAM)m_pGalaxy->m_hWnd, 19651965);
 							break;
 						}
 					}
@@ -2348,11 +2353,11 @@ STDMETHODIMP CGalaxy::Observe(BSTR bstrKey, BSTR bstrXml, IXobj** ppRetXobj)
 			}
 		}
 	}
-	if (g_pCosmos->m_pMDIMainWnd && g_pCosmos->m_pMDIMainWnd->m_hMDIClient == m_hWnd)
+	if (m_bTabbedMDIClient)
 	{
 		if (g_pCosmos->m_pMDIMainWnd->m_pClientXobj)
 			m_pBindingXobj = g_pCosmos->m_pMDIMainWnd->m_pClientXobj;
-		::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+		::PostAppMessage(::GetCurrentThreadId(), WM_QUERYAPPPROXY, (WPARAM)m_hWnd, 19651965);
 	}
 	if (m_strGalaxyName == _T("default"))
 	{
@@ -2851,7 +2856,7 @@ LRESULT CGalaxy::OnShowWindow(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	}
 	else
 	{
-		if (wParam && g_pCosmos->m_pMDIMainWnd && g_pCosmos->m_pMDIMainWnd->m_hMDIClient == m_hWnd)
+		if (wParam && m_bTabbedMDIClient)
 		{
 			TRACE(_T("\n"));
 		}
@@ -2946,10 +2951,18 @@ LRESULT CGalaxy::OnCosmosMsg(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	case 20180115:
 	{
 		HostPosChanged();
-		if (g_pCosmos->m_pMDIMainWnd &&
-			g_pCosmos->m_pMDIMainWnd->m_pGalaxy &&
-			::IsChild(g_pCosmos->m_pMDIMainWnd->m_hWnd, m_hWnd))
-			g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
+		HWND hPWnd = ::GetAncestor(m_hWnd, GA_ROOT);
+		auto it = g_pCosmos->m_mapCosmosFrameWndInfo.find(hPWnd);
+		if (it != g_pCosmos->m_mapCosmosFrameWndInfo.end())
+		{
+			IGalaxy* pGalaxy = nullptr;
+			g_pCosmos->GetGalaxy((__int64)it->second->m_hClient, &pGalaxy);
+			if (pGalaxy)
+			{
+				CGalaxy* _pGalaxy = (CGalaxy*)pGalaxy;
+				_pGalaxy->HostPosChanged();
+			}
+		}
 	}
 	break;
 	case 20200601:
@@ -3127,14 +3140,13 @@ LRESULT CGalaxy::OnQueryAppProxy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	{
 		m_bTabbedMDIClient = true;
 		LPRECT lpRECT = (LPRECT)wParam;
-		m_OldRect = *lpRECT;
 		if (lpRECT && m_pWorkXobj && ::IsWindowVisible(m_pWorkXobj->m_pHostWnd->m_hWnd))
 		{
-			::SetWindowPos(m_pWorkXobj->m_pHostWnd->m_hWnd, HWND_BOTTOM, lpRECT->left, lpRECT->top, lpRECT->right - lpRECT->left, lpRECT->bottom - lpRECT->top, SWP_NOREDRAW | SWP_NOACTIVATE | SWP_NOZORDER);/*SWP_FRAMECHANGED| SWP_HIDEWINDOW | SWP_NOREDRAW */
+			m_OldRect = *lpRECT;
+			::SetWindowPos(m_pWorkXobj->m_pHostWnd->m_hWnd, HWND_BOTTOM, m_OldRect.left, m_OldRect.top, m_OldRect.right - m_OldRect.left, m_OldRect.bottom - m_OldRect.top, SWP_NOREDRAW | SWP_NOACTIVATE | SWP_NOZORDER);
 			if (m_pBindingXobj && ::IsWindowVisible(m_pBindingXobj->m_pHostWnd->m_hWnd))
 			{
 				m_pBindingXobj->m_pHostWnd->GetWindowRect(lpRECT);
-
 				::ScreenToClient(::GetParent(m_hWnd), (LPPOINT)lpRECT);
 				::ScreenToClient(::GetParent(m_hWnd), ((LPPOINT)lpRECT) + 1);
 			}

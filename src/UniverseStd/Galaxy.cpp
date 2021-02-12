@@ -2790,14 +2790,13 @@ LRESULT CGalaxy::OnQueryAppProxy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	{
 		m_bTabbedMDIClient = true;
 		LPRECT lpRECT = (LPRECT)wParam;
-		m_OldRect = *lpRECT;
 		if (lpRECT && m_pWorkXobj && ::IsWindowVisible(m_pWorkXobj->m_pHostWnd->m_hWnd))
 		{
-			::SetWindowPos(m_pWorkXobj->m_pHostWnd->m_hWnd, HWND_BOTTOM, lpRECT->left, lpRECT->top, lpRECT->right - lpRECT->left, lpRECT->bottom - lpRECT->top, SWP_NOREDRAW | SWP_NOACTIVATE | SWP_NOZORDER);/*SWP_FRAMECHANGED| SWP_HIDEWINDOW | SWP_NOREDRAW */
+			m_OldRect = *lpRECT;
+			::SetWindowPos(m_pWorkXobj->m_pHostWnd->m_hWnd, HWND_BOTTOM, m_OldRect.left, m_OldRect.top, m_OldRect.right - m_OldRect.left, m_OldRect.bottom - m_OldRect.top, SWP_NOREDRAW | SWP_NOACTIVATE | SWP_NOZORDER);
 			if (m_pBindingXobj && ::IsWindowVisible(m_pBindingXobj->m_pHostWnd->m_hWnd))
 			{
 				m_pBindingXobj->m_pHostWnd->GetWindowRect(lpRECT);
-
 				::ScreenToClient(::GetParent(m_hWnd), (LPPOINT)lpRECT);
 				::ScreenToClient(::GetParent(m_hWnd), ((LPPOINT)lpRECT) + 1);
 			}

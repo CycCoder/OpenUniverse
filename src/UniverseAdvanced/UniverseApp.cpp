@@ -970,8 +970,6 @@ LRESULT CALLBACK CUniverse::CosmosMsgWndProc(_In_ HWND hWnd, UINT msg, _In_ WPAR
 					::PostMessage(it.first, WM_BROWSERLAYOUT, 0, 4);
 				}
 			}
-			if (g_pCosmos->m_pMDIMainWnd && g_pCosmos->m_pMDIMainWnd->m_pGalaxy)
-				g_pCosmos->m_pMDIMainWnd->m_pGalaxy->HostPosChanged();
 		}
 		break;
 		}
@@ -1909,6 +1907,12 @@ LRESULT CALLBACK CUniverse::GetMessageProc(int nCode, WPARAM wParam, LPARAM lPar
 				return CallNextHookEx(pThreadInfo->m_hGetMessageHook, nCode, wParam, lParam);
 			}
 			break;
+			case WM_QUERYAPPPROXY:
+			{
+				if (lpMsg->lParam == 19651965)
+					g_pCosmos->m_pCosmosDelegate->QueryWndInfo(QueryType::RecalcLayout, (HWND)lpMsg->wParam);
+			}
+			break;
 			case WM_MDICHILDMIN:
 				::BringWindowToTop(lpMsg->hwnd);
 				break;
@@ -2069,10 +2073,14 @@ LRESULT CALLBACK CUniverse::GetMessageProc(int nCode, WPARAM wParam, LPARAM lPar
 											if (pWnd == nullptr)
 											{
 												pWnd = new CMDIChildWindow();
-												g_pCosmos->m_pMDIMainWnd->m_pActiveMDIChild = nullptr;
 												pWnd->SubclassWindow(hWnd);
-												g_pCosmos->m_pMDIMainWnd->m_mapMDIChildHelperWnd[hWnd] = pWnd;
-												::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_COSMOSMSG, (WPARAM)pWnd, 20210202);
+												HWND hParent = ::GetParent(::GetParent(hWnd));
+												auto itInfo = g_pCosmos->m_mapCosmosFrameWndInfo.find(hParent);
+												if (itInfo != g_pCosmos->m_mapCosmosFrameWndInfo.end())
+												{
+													itInfo->second->m_mapMDIChildHelperWnd[hWnd] = pWnd;
+												}
+												::PostMessage(hParent, WM_COSMOSMSG, (WPARAM)pWnd, 20210202);
 											}
 											if (pWnd->m_pGalaxy == nullptr)
 												pWnd->m_pGalaxy = (CGalaxy*)pGalaxy;
@@ -2214,7 +2222,7 @@ LRESULT CALLBACK CUniverse::GetMessageProc(int nCode, WPARAM wParam, LPARAM lPar
 											}
 										}
 										if (g_pCosmos->m_pMDIMainWnd)
-											::PostMessage(g_pCosmos->m_pMDIMainWnd->m_hWnd, WM_QUERYAPPPROXY, 0, 19651965);
+											::PostAppMessage(::GetCurrentThreadId(), WM_QUERYAPPPROXY, (WPARAM)g_pCosmos->m_pMDIMainWnd->m_hMDIClient, 19651965);
 									}
 									if (pFrameWnd)
 									{

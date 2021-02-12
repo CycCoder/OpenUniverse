@@ -8,7 +8,7 @@
 #include "OutputWnd.h"
 #include "PropertiesWnd.h"
 
-class CMainFrame : public CTangramMDIFrameWndEx
+class CMainFrame : public CCosmosMDIFrame
 {
 	DECLARE_DYNAMIC(CMainFrame)
 public:
@@ -56,8 +56,6 @@ protected:
 
 	BOOL CreateDockingWindows();
 	void SetDockingWindowIcons(BOOL bHiColorIcons);
-public:
-	virtual void AdjustClientArea();
 };
 
 

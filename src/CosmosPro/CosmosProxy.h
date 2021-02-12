@@ -49,9 +49,11 @@ public:
 	HWND m_hOwner = nullptr;
 	gcroot<ToolStripDropDownMenu^> m_pToolStripDropDownMenu = nullptr;
 	BEGIN_MSG_MAP(CHelperWnd)
+		MESSAGE_HANDLER(WM_CANCELMODE, OnCancelMode)
 		MESSAGE_HANDLER(WM_SHOWWINDOW, OnShowWindow)
 	END_MSG_MAP()
 	void OnFinalMessage(HWND hWnd);
+	LRESULT OnCancelMode(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnShowWindow(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 };
 

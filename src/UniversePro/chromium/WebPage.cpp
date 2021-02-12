@@ -833,7 +833,7 @@ namespace Browser {
 				g_pCosmos->TangramInitFromeWeb();
 				CustomizedMainWindowElement(g_pCosmos->m_strMainWndXml);
 				::PostMessage(::GetParent(m_hWnd), WM_COSMOSMSG, 20200214, 0);
-				if (g_pCosmos->m_pMDIMainWnd && g_pCosmos->m_hFirstView)
+				if (g_pCosmos->m_hFirstView)
 				{
 					::PostAppMessage(::GetCurrentThreadId(), WM_COSMOSMSG, (WPARAM)g_pCosmos->m_hFirstView, 20210110);
 				}

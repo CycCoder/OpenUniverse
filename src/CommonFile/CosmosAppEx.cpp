@@ -216,12 +216,11 @@ namespace CommonUniverse
 				{
 					__int64 nHandle = 0;
 					pGalaxy->get_HWND(&nHandle);
-					HWND hWnd = (HWND)nHandle;
-					m_hPWnd = ::GetParent(hWnd);
+					m_hPWnd = (HWND)nHandle;
 				}
 			}
 			if (m_hPWnd)
-				::PostMessage(m_hPWnd, WM_QUERYAPPPROXY, 0, 19651965);
+				::PostAppMessage(::GetCurrentThreadId(), WM_QUERYAPPPROXY, (WPARAM)m_hPWnd, 19651965);
 		}
 		BOOL bRet = CMFCTabCtrl::SetActiveTab(iTab);
 		return bRet;
@@ -902,9 +901,9 @@ namespace CommonUniverse
 			CWnd* pWnd = CWnd::FromHandlePermanent((HWND)h);
 			if (pWnd == NULL)
 				return NULL;
-			if (pWnd->IsKindOf(RUNTIME_CLASS(CTangramMDIFrameWndEx)))
+			if (pWnd->IsKindOf(RUNTIME_CLASS(CCosmosMDIFrame)))
 			{
-				pGalaxyClusterProxy = (CGalaxyClusterProxy*)(CTangramMDIFrameWndEx*)pWnd;
+				pGalaxyClusterProxy = (CGalaxyClusterProxy*)(CCosmosMDIFrame*)pWnd;
 			}
 			if (pGalaxyClusterProxy)
 				pGalaxyClusterProxy->m_bAutoDelete = false;
@@ -1289,23 +1288,22 @@ namespace CommonUniverse
 		return true;
 	}
 
-	IMPLEMENT_DYNCREATE(CTangramMDIFrameWndEx, CMDIFrameWndEx)
+	IMPLEMENT_DYNCREATE(CCosmosMDIFrame, CMDIFrameWndEx)
 
-	BEGIN_MESSAGE_MAP(CTangramMDIFrameWndEx, CMDIFrameWndEx)
-		ON_MESSAGE(WM_QUERYAPPPROXY, OnQueryAppProxy)
+	BEGIN_MESSAGE_MAP(CCosmosMDIFrame, CMDIFrameWndEx)
 		ON_WM_NCACTIVATE()
 	END_MESSAGE_MAP()
 
 
-	CTangramMDIFrameWndEx::CTangramMDIFrameWndEx()
+	CCosmosMDIFrame::CCosmosMDIFrame()
 	{
 	}
 
-	CTangramMDIFrameWndEx::~CTangramMDIFrameWndEx()
+	CCosmosMDIFrame::~CCosmosMDIFrame()
 	{
 	}
 
-	BOOL CTangramMDIFrameWndEx::OnCommand(WPARAM wParam, LPARAM lParam)
+	BOOL CCosmosMDIFrame::OnCommand(WPARAM wParam, LPARAM lParam)
 	{
 		//if (m_hClient == nullptr)
 		//{
@@ -1330,29 +1328,18 @@ namespace CommonUniverse
 		return CMDIFrameWndEx::OnCommand(wParam, lParam);
 	}
 
-	void CTangramMDIFrameWndEx::AdjustClientArea()
+	void CCosmosMDIFrame::AdjustClientArea()
 	{
 		CMDIFrameWndEx::AdjustClientArea();
-		CRect rc = m_dockManager.GetClientAreaBounds();
-		::SendMessage(m_hWndMDIClient, WM_QUERYAPPPROXY, (WPARAM)(LPRECT)rc, 19651965);
-		m_wndClientArea.CalcWindowRectForMDITabbedGroups(rc, 0);
-	}
-
-	LRESULT CTangramMDIFrameWndEx::OnQueryAppProxy(WPARAM wp, LPARAM lp)
-	{
-		if (lp)
+		if (g_pCosmosImpl)
 		{
-			switch (lp)
-			{
-			case 19651965:
-				RecalcLayout();
-				break;
-			}
+			CRect rc = m_dockManager.GetClientAreaBounds();
+			g_pCosmosImpl->AdjustClientArea(m_hWndMDIClient, rc);
+			m_wndClientArea.CalcWindowRectForMDITabbedGroups(rc, 0);
 		}
-		return 0;// (LRESULT)(IUniverseAppProxy*)&theApp;
 	}
 
-	BOOL CTangramMDIFrameWndEx::OnNcActivate(BOOL bActive)
+	BOOL CCosmosMDIFrame::OnNcActivate(BOOL bActive)
 	{
 		CMFCRibbonBar* pBar = GetRibbonBar();
 		if (pBar && ::IsWindow(pBar->m_hWnd) == NULL)
@@ -1360,7 +1347,7 @@ namespace CommonUniverse
 		return CMDIFrameWndEx::OnNcActivate(bActive);
 	}
 
-	void CTangramMDIFrameWndEx::OnTabChange(IXobj* sender, LONG ActivePage, LONG OldPage)
+	void CCosmosMDIFrame::OnTabChange(IXobj* sender, LONG ActivePage, LONG OldPage)
 	{
 		__int64 h = 0;
 		sender->get_Handle(&h);
@@ -1372,7 +1359,7 @@ namespace CommonUniverse
 		pActiveNode->get_NameAtWindowPage(&bstrName2);
 	}
 
-	void CTangramMDIFrameWndEx::OnClrControlCreated(IXobj* Node, IDispatch* Ctrl, CString CtrlName, HWND CtrlHandle)
+	void CCosmosMDIFrame::OnClrControlCreated(IXobj* Node, IDispatch* Ctrl, CString CtrlName, HWND CtrlHandle)
 	{
 		CComBSTR bstrName("");
 		Node->get_Name(&bstrName);
@@ -1380,19 +1367,19 @@ namespace CommonUniverse
 		Node->get_NameAtWindowPage(&bstrName2);
 	}
 
-	void CTangramMDIFrameWndEx::OnEvent(IDispatch* sender, IDispatch* EventArg)
+	void CCosmosMDIFrame::OnEvent(IDispatch* sender, IDispatch* EventArg)
 	{
 	}
 
-	void CTangramMDIFrameWndEx::OnControlNotify(IXobj* sender, LONG NotifyCode, LONG CtrlID, HWND CtrlHandle, CString CtrlClassName)
+	void CCosmosMDIFrame::OnControlNotify(IXobj* sender, LONG NotifyCode, LONG CtrlID, HWND CtrlHandle, CString CtrlClassName)
 	{
 	}
 
-	void CTangramMDIFrameWndEx::OnHubbleEvent(ICosmosEventObj* NotifyObj)
+	void CCosmosMDIFrame::OnHubbleEvent(ICosmosEventObj* NotifyObj)
 	{
 	}
 
-	BOOL CTangramMDIFrameWndEx::OnShowPopupMenu(CMFCPopupMenu* pMenuPopup)
+	BOOL CCosmosMDIFrame::OnShowPopupMenu(CMFCPopupMenu* pMenuPopup)
 	{
 		if (pMenuPopup == nullptr || ::IsWindow(pMenuPopup->m_hWnd) == false)
 			return false;
