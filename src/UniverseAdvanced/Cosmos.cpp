@@ -235,7 +235,6 @@ CCosmos::CCosmos()
 	m_strBridgeJavaClass = "";
 	m_strCurrentEclipsePagePath = _T("");
 	m_strDesignerToolBarCaption = _T("Tangram Designer");
-	m_strOfficeAppIDs = _T("word.application,excel.application,outlook.application,onenote.application,infopath.application,project.application,visio.application,access.application,powerpoint.application,lync.ucofficeintegration.1,");
 	m_nTangramObj = 0;
 	launchMode = -1;
 #ifdef _DEBUG

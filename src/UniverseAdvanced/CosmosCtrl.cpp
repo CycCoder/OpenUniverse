@@ -27,7 +27,6 @@
 #include "Xobj.h"
 #include "Galaxy.h"
 #include "CosmosCtrl.h"
-#include "OfficePlus\OfficeAddin.h"
 
 HRESULT WINAPI CCosmosCtrl::CreateInstance(void* pv, REFIID riid, LPVOID* ppv)
 {
@@ -39,10 +38,6 @@ HRESULT WINAPI CCosmosCtrl::CreateInstance(void* pv, REFIID riid, LPVOID* ppv)
 		}
 		if (g_pCosmos->m_nAppID != -1)
 		{
-			OfficePlus::COfficeAddin* pAddin = (OfficePlus::COfficeAddin*)g_pCosmos;
-			HRESULT hr = pAddin->CreateCosmosCtrl(pv, riid, ppv);
-			if (hr == S_OK)
-				return hr;
 		}
 		if (g_pCosmos->m_pUniverseAppProxy)
 		{
@@ -144,7 +139,6 @@ STDMETHODIMP CCosmosCtrl::get_tag(VARIANT* pVal)
 {
 	return S_OK;
 }
-
 
 STDMETHODIMP CCosmosCtrl::put_tag(VARIANT newVal)
 {

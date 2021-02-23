@@ -379,7 +379,6 @@ protected:
 
 private:
 	HWND								m_hCreatingWnd;
-	CString								m_strOfficeAppIDs;
 	CString								m_strExcludeAppExtenderIDs;
 	CWindow								m_HelperWnd;
 	CComObject<CXobjCollection>*		m_pRootNodes;
