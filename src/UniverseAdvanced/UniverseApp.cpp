@@ -74,12 +74,6 @@
 #include "CloudUtilities\DownLoad.h"
 #include "EclipsePlus\EclipseAddin.h"
 
-#include "OfficePlus\WordPlus\WordAddin.h"
-#include "OfficePlus\ExcelPlus\ExcelAddin.h"
-#include "OfficePlus\OutLookPlus\OutLookAddin.h"
-#include "OfficePlus\ProjectPlus\ProjectAddin.h"
-#include "OfficePlus\PowerPointPlus\PowerPointAddin.h"
-
 #include "XobjHelper.h"
 #include "Xobj.h"
 #include "Galaxy.h"
@@ -92,10 +86,6 @@
 
 #include "chromium\Browser.h"
 #include "chromium\WebPage.h"
-
-using namespace OfficePlus;
-using namespace OfficePlus::WordPlus;
-using namespace OfficePlus::ExcelPlus;
 
 // Description  : the unique App object
 CUniverse theApp;
@@ -390,73 +380,27 @@ BOOL CUniverse::InitInstance()
 
 	m_bHostCLR = (BOOL)::GetModuleHandle(_T("mscoreei.dll"));
 	CString strExes = _T("");
-	HMODULE hModule = ::GetModuleHandle(_T("mso.dll"));
-	if (hModule)
-	{
-		strExes = _T("winword,excel,powerpnt,outlook,msaccess,infopath,winproj,onenote,visio,");
-		bOfficeApp = true;
-	}
-	if (bOfficeApp)
-	{
-		COfficeAddin* pOfficeAddin = (COfficeAddin*)this;
-		nPos = strExes.Find(strExeName);
-		if (nPos != -1)
-		{
-			int nAppID = strExes.Left(nPos).Replace(_T(","), _T(""));
-			switch (nAppID)
-			{
-			case 0:
-				new CComObject < WordPlus::CWordAddin >;
-				break;
-			case 1:
-				new CComObject < ExcelPlus::CExcelAddin >;
-				break;
-			case 2:
-				new CComObject < PowerPointPlus::CPowerPntAddin >;
-				break;
-			case 3:
-				new CComObject < OutLookPlus::COutLookAddin >;
-				break;
-			case 4:
-				break;
-			case 6:
-				new CComObject < ProjectPlus::CProjectAddin >;
-				break;
-				//case 5:
-				//	m_pCosmos = new CComObject < InfoPathPlus::CInfoPathCloudAddin >;
-				//	break;
-			case 7:
-				new CComObject < OfficePlus::COfficeAddin >;
-				break;
-			case 8:
-				break;
-			}
-			g_pCosmos->m_nAppID = nAppID;
-		}
-	}
-	else
-	{
+
 #ifndef _WIN64
-		{
-			new CComObject < CCosmos >;
-			g_pCosmos->m_strExeName = strExeName;
-			g_pCosmos->m_dwThreadID = ::GetCurrentThreadId();
-			if (g_pCosmos->m_hCBTHook == nullptr)
-				g_pCosmos->m_hCBTHook = SetWindowsHookEx(WH_CBT, CUniverse::CBTProc, NULL, g_pCosmos->m_dwThreadID);
-			theApp.SetHook(g_pCosmos->m_dwThreadID);
-		}
-#else
+	{
 		new CComObject < CCosmos >;
 		g_pCosmos->m_strExeName = strExeName;
 		g_pCosmos->m_dwThreadID = ::GetCurrentThreadId();
 		if (g_pCosmos->m_hCBTHook == nullptr)
 			g_pCosmos->m_hCBTHook = SetWindowsHookEx(WH_CBT, CUniverse::CBTProc, NULL, g_pCosmos->m_dwThreadID);
-		g_pCosmos->m_bEnableProcessFormTabKey = true;
 		theApp.SetHook(g_pCosmos->m_dwThreadID);
-		if (g_pCosmos->m_hForegroundIdleHook == NULL)
-			g_pCosmos->m_hForegroundIdleHook = SetWindowsHookEx(WH_FOREGROUNDIDLE, CUniverse::ForegroundIdleProc, NULL, ::GetCurrentThreadId());
-#endif	
 	}
+#else
+	new CComObject < CCosmos >;
+	g_pCosmos->m_strExeName = strExeName;
+	g_pCosmos->m_dwThreadID = ::GetCurrentThreadId();
+	if (g_pCosmos->m_hCBTHook == nullptr)
+		g_pCosmos->m_hCBTHook = SetWindowsHookEx(WH_CBT, CUniverse::CBTProc, NULL, g_pCosmos->m_dwThreadID);
+	g_pCosmos->m_bEnableProcessFormTabKey = true;
+	theApp.SetHook(g_pCosmos->m_dwThreadID);
+	if (g_pCosmos->m_hForegroundIdleHook == NULL)
+		g_pCosmos->m_hForegroundIdleHook = SetWindowsHookEx(WH_FOREGROUNDIDLE, CUniverse::ForegroundIdleProc, NULL, ::GetCurrentThreadId());
+#endif	
 	if (g_pCosmos)
 	{
 		WNDCLASS wndClass;
@@ -658,18 +602,6 @@ LRESULT CALLBACK CUniverse::CosmosWndProc(_In_ HWND hWnd, UINT msg, _In_ WPARAM 
 		g_pCosmos->OnOpenDoc(wParam);
 	}
 	break;
-	case WM_INITOUTLOOK:
-	{
-		((OfficePlus::OutLookPlus::COutLookAddin*)g_pCosmos)->InitOutLook();
-	}
-	break;
-	case WM_OFFICEOBJECTCREATED:
-	{
-		HWND hWnd = (HWND)wParam;
-		if (::IsWindow(hWnd))
-			((OfficePlus::COfficeAddin*)g_pCosmos)->ConnectOfficeObj(hWnd);
-	}
-	break;
 	case WM_COSMOSMSG:
 		switch (lParam)
 		{
@@ -732,18 +664,6 @@ LRESULT CALLBACK CUniverse::CosmosWndProc(_In_ HWND hWnd, UINT msg, _In_ WPARAM 
 			}
 		}
 		break;
-		case 1222:
-		{
-			if (wParam == 1963)
-			{
-				OfficePlus::OutLookPlus::COutLookAddin* pAddin = (OfficePlus::OutLookPlus::COutLookAddin*)g_pCosmos;
-				if (pAddin->m_pActiveOutlookExplorer)
-				{
-					pAddin->m_pActiveOutlookExplorer->SetDesignState();
-				}
-			}
-		}
-		break;
 		case TANGRAM_CHROME_APP_INIT:
 		{
 			if (g_pCosmos->m_nAppType == APP_BROWSER_ECLIPSE || g_pCosmos->m_bEclipse)
@@ -783,65 +703,6 @@ LRESULT CALLBACK CUniverse::CosmosWndProc(_In_ HWND hWnd, UINT msg, _In_ WPARAM 
 			pXobj->get_Handle(&h);
 			HWND hWnd = (HWND)h;
 			::InvalidateRect(hWnd, nullptr, true);
-		}
-	}
-	break;
-	case WM_HUBBLE_NEWOUTLOOKOBJ:
-	{
-		using namespace OfficePlus::OutLookPlus;
-		int nType = wParam;
-		HWND hWnd = ::GetActiveWindow();
-		if (nType)
-		{
-			COutLookExplorer* pOutLookPlusItemWindow = (COutLookExplorer*)lParam;
-			COutLookAddin* pAddin = (COutLookAddin*)g_pCosmos;
-			pOutLookPlusItemWindow->m_strKey = pAddin->m_strCurrentKey;
-			pAddin->m_mapOutLookPlusExplorerMap[hWnd] = pOutLookPlusItemWindow;
-			pOutLookPlusItemWindow->m_hWnd = hWnd;
-		}
-	}
-	break;
-	case WM_HUBBLE_ACTIVEINSPECTORPAGE:
-	{
-		using namespace OfficePlus::OutLookPlus;
-		COutLookInspector* pOutLookPlusItemWindow = (COutLookInspector*)wParam;
-		pOutLookPlusItemWindow->ActivePage();
-	}
-	break;
-	case WM_HUBBLE_ITEMLOAD:
-	{
-		using namespace OfficePlus::OutLookPlus;
-		COutLookAddin* pAddin = (COutLookAddin*)g_pCosmos;
-		HWND hWnd = ::GetActiveWindow();
-		auto it = pAddin->m_mapOutLookPlusExplorerMap.find(hWnd);
-		if (it != pAddin->m_mapOutLookPlusExplorerMap.end())
-		{
-			COutLookExplorer* pExplorer = it->second;
-			if (pExplorer->m_pInspectorContainerWnd == nullptr)
-			{
-				HWND _hWnd = ::FindWindowEx(hWnd, NULL, _T("rctrl_renwnd32"), NULL);
-				if (_hWnd)
-				{
-					_hWnd = ::FindWindowEx(_hWnd, NULL, _T("AfxWndW"), NULL);
-					if (_hWnd)
-					{
-						pExplorer->m_pInspectorContainerWnd = new CInspectorContainerWnd();
-						pExplorer->m_pInspectorContainerWnd->SubclassWindow(_hWnd);
-					}
-				}
-			}
-
-			long nKey = wParam;
-			auto it = pAddin->m_mapCosmosInspectorItem.find(nKey);
-			if (it != pAddin->m_mapCosmosInspectorItem.end())
-			{
-				CInspectorItem* pItem = (CInspectorItem*)wParam;
-				if (pExplorer->m_pInspectorContainerWnd)
-				{
-					pExplorer->m_pInspectorContainerWnd->m_strXml = pItem->m_strXml;
-					::PostMessage(pExplorer->m_pInspectorContainerWnd->m_hWnd, WM_HUBBLE_ITEMLOAD, 0, 0);
-				}
-			}
 		}
 	}
 	break;
@@ -1394,10 +1255,6 @@ LRESULT CUniverse::CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 		}
-		break;
-	case HCBT_SETFOCUS:
-		if (g_pCosmos->m_bOfficeApp && g_pCosmos->m_nAppID != -1)
-			((COfficeAddin*)g_pCosmos)->SetFocus(hWnd);
 		break;
 	case HCBT_ACTIVATE:
 	{

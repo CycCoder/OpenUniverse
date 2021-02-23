@@ -32,8 +32,6 @@
 #include "XobjHelper.h"
 #include "UniverseApp.h"
 #include "TangramHtmlTreeWnd.h"
-#include "OfficePlus\ExcelPlus\ExcelAddin.h"
-#include "OfficePlus\ExcelPlus\ExcelPlusWnd.h"
 
 #include "chromium/WebPage.h"
 

@@ -33,11 +33,8 @@
 #include "Xobj.h"
 #include "Galaxy.h"
 #include "TangramHtmlTreeWnd.h"
-#include "OfficePlus\WordPlus\WordAddin.h"
 #include "EclipsePlus\EclipseAddin.h"
 #include "Wormhole.h"
-
-using namespace OfficePlus::WordPlus;
 
 class CDockPaneWnd : public CWnd
 {
