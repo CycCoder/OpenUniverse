@@ -236,7 +236,7 @@ BOOL CMainFrame::CreateDockingWindows()
 		TRACE0("Failed to create Output window\n");
 		return FALSE; // failed to create
 	}
-
+	//m_wndOutput.SetAutoHideMode(true, CBRS_ALIGN_BOTTOM);
 	// Create properties window
 	CString strPropertiesWnd;
 	bNameValid = strPropertiesWnd.LoadString(IDS_PROPERTIES_WND);
